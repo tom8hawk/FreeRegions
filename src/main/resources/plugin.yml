@@ -1,0 +1,12 @@
+name: FreeRegions
+version: '${project.version}'
+main: ru.siaw.free.regions.regions.Main
+authors: [ tom8hawk ]
+website: siaw.ru
+
+commands:
+  rg:
+    desription: Commands of the plugin itself/business trips
+permissions:
+  siawrg.reload:
+    default: op

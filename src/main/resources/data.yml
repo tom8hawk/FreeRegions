@@ -1,0 +1,21 @@
+Regions:
+  test:
+    location1:
+      - world
+      - 0;-1000;0
+    location2:
+      - 1;-1000;1
+    owners:
+      - null
+    members:
+      - null
+    pvp: false
+    mob-spawning: false
+    mob-damage: false
+    use: false
+    build: false
+    invincible: false
+    leaves-falling: false
+    explosion: false
+    item-drop: true
+    entry: true
