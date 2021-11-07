@@ -10,7 +10,6 @@ import ru.siaw.free.regions.regions.utils.Print;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public class DataBase extends YAML
@@ -34,15 +33,10 @@ public class DataBase extends YAML
         return configuration.getStringList(mainKey + path);
     }
 
-    public Set<String> getKeys() { // Позже может пригодиться где-то ещё
-        return configuration.getKeys(true);
-    }
-
-    private static final Boolean readRegionSync = true;
     public void readRegion(Player p) {
         new Thread(() -> {
-            synchronized (readRegionSync) {
-                getKeys().forEach(key -> {
+            synchronized (configuration) {
+                configuration.getKeys(true).forEach(key -> {
                     String[] splits = key.split("//.");
                     if (splits.length > 2) {
                         String regionName = splits[1];
@@ -93,7 +87,7 @@ public class DataBase extends YAML
 
                 Location location1 = region.getLocation1();
                 List<String> loc1 = new ArrayList<>();
-                loc1.add(location1.getWorld().toString());
+                loc1.add(location1.getWorld().getName());
                 loc1.add(location1.getBlockX() + ";" + location1.getBlockY() + ";" + location1.getBlockZ());
                 configuration.set(key + "location1", loc1);
 
@@ -133,10 +127,11 @@ public class DataBase extends YAML
     public void load() {
         try {
             configuration.load(file);
-            Print.toConsole("База приватов заружена!");
+            Print.toConsole("Список приватов заружен!");
         } catch (IOException |org.bukkit.configuration.InvalidConfigurationException e) {
-            Print.toConsole("Исключение при загрузке базы! " + e.getMessage());
+            Print.toConsole("Исключение при загрузке списка приватов! " + e.getMessage());
         }
         Bukkit.getOnlinePlayers().forEach(Region::addOnline);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> Region.getRegions().forEach(this::writeRegion), 300L, 300L);
     }
 }

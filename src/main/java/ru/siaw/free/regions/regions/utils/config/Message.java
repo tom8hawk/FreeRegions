@@ -34,6 +34,6 @@ public final class Message extends YAML
         } catch (IOException |org.bukkit.configuration.InvalidConfigurationException e) {
             e.printStackTrace();
         }
-        Print.toConsole("Сообщения подгружены.");
+        Print.toConsole("Список сообщений сохранен.");
     }
 }

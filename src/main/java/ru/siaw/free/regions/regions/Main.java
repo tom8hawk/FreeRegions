@@ -20,19 +20,24 @@ public final class Main extends JavaPlugin
 
     @Override
     public void onEnable() {
+        enable();
+
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+        getCommand("rg").setExecutor(new Commands());
+    }
+
+    public void enable() {
         Print.toConsole("Запуск! :>");
         File dataFolder = getDataFolder();
         if (!dataFolder.exists())
             dataFolder.mkdir();
         new Message();
         new DataBase();
-
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
-        getCommand("rg").setExecutor(new Commands());
     }
 
     @Override
     public void onDisable() {
+        Bukkit.getScheduler().cancelTasks(this);
         Region.getRegions().forEach(DataBase.inst::writeRegion);
         Print.toConsole("До новых встреч! :0");
     }

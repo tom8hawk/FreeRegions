@@ -8,5 +8,9 @@ commands:
   rg:
     desription: Commands of the plugin itself/business trips
 permissions:
-  siawrg.reload:
+  freeg.reload:
+    default: op
+  freeg.wand:
+    default: op
+  freeg.create:
     default: op

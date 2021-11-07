@@ -2,17 +2,17 @@ package ru.siaw.free.regions.regions;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import ru.siaw.free.regions.regions.utils.Other;
 import ru.siaw.free.regions.regions.utils.config.DataBase;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Region
 {
-    private static final HashSet<Region> regions = new HashSet<>(); // Все регионы
-
-    private final List<Player> onlinePlayers = new ArrayList<>(); // Игроки онлайн с региона
+    private static final List<Region> regions = new LinkedList<>(); // Все регионы
+    private final List<Player> onlinePlayers = new LinkedList<>(); // Игроки онлайн с региона
 
     private final String name;
     private final Location location1, location2;
@@ -21,7 +21,7 @@ public class Region
 
     public Region(String name, Location location1, Location location2, List<Player> owners, List<Player> members, boolean pvp, boolean mobSpawning, boolean mobDamage,
                   boolean use, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
-        this.name = format(name);
+        this.name = Other.format(name);
         this.location1 = location1;
         this.location2 = location2;
         this.owners = owners;
@@ -43,7 +43,7 @@ public class Region
 
     public Region(String name, Location location1, Location location2, Player creator, boolean pvp, boolean mobSpawning, boolean mobDamage,
                   boolean use, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
-        this.name = format(name);
+        this.name = Other.format(name);
         this.location1 = location1;
         this.location2 = location2;
         owners.add(creator);
@@ -62,8 +62,8 @@ public class Region
         regions.add(this);
     }
 
-    public static Region getByName(String name) {
-        String inFormat = format(name);
+    public static Region getByName(String name) { // Для комманд с названием региона
+        String inFormat = Other.format(name);
         Region result = null;
 
         for (Region region : regions) {
@@ -73,33 +73,25 @@ public class Region
         return result;
     }
 
-    private static String format(String string) {
-        String lowerCase = string.toLowerCase();
-        String at0 = String.valueOf(lowerCase.charAt(0));
-        return lowerCase.replace(at0, at0.toUpperCase()) ;
-    }
-
-    private static final Boolean addSync = true; // Оп оп потокобезопасность
     public static void addOnline(Player p) {
-        List<Boolean> find = new ArrayList<>();
+        List<Boolean> found = new ArrayList<>();
         new Thread(() -> {
-            synchronized(addSync) {
+            synchronized(regions) {
                 regions.forEach(rg -> {
                     if (rg.members.contains(p) || rg.owners.contains(p)) { // Где-то есть наш игрок?
                         rg.onlinePlayers.add(p);
-                        find.add(true);
+                        found.add(true);
                     }
                 });
-                if (find.isEmpty()) // Нигде нету?
+                if (found.isEmpty()) // Нигде нету?
                     DataBase.inst.readRegion(p); // Читаем приват, связанный с этим игроком
             }
         }).start();
     }
 
-    private static final Boolean removeSync = true;
     public static void removeOnline(Player p) { // На выходе игрока с сервера
         new Thread(() -> {
-            synchronized (removeSync) {
+            synchronized (regions) {
                 regions.forEach(rg -> {
                     if (rg.onlinePlayers.contains(p)) { // В каком привате есть наш игрок?
                         rg.onlinePlayers.remove(p);
@@ -115,6 +107,7 @@ public class Region
     }
 
     // Добавление в списки
+
     public void addOwner(Player owner) {
         owners.add(owner);
     }
@@ -133,7 +126,7 @@ public class Region
 
     // Геттеры, сеттеры
 
-    public static HashSet<Region> getRegions() {
+    public static List<Region> getRegions() {
         return regions;
     }
 
