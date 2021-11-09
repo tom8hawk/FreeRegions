@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import ru.siaw.free.regions.regions.Main;
+import ru.siaw.free.regions.regions.Region;
 import ru.siaw.free.regions.regions.utils.Other;
 import ru.siaw.free.regions.regions.utils.Selection;
 import ru.siaw.free.regions.regions.utils.config.Message;
@@ -22,45 +23,63 @@ public class Commands implements CommandExecutor
         if (args.length > 0) {
             Player player = null; if (sender instanceof Player) player = (Player)sender;
             switch(args[0].toLowerCase()) {
-                case "reload":
-                    if (validate(sender, false, "reload")) {
-                        plugin.onDisable();
-                        plugin.enable();
-                    }
-                    break;
                 case "wand":
                     if (validate(sender, true, "wand")) {
                         sender.sendMessage(Message.inst.getMessage("Wand"));
                         player.getInventory().addItem(Other.createItemStack(Material.ARROW, "§eВыделитель региона", " §7ЛКМ => 1 позиция", " §7ПКМ => 2 позиция"));
                     }
                     break;
+                case "pos1":
+                    if (isPlayer(sender))
+                        Selection.get(player).setPos1(player.getLocation(), player);
+                    break;
+                case "pos2":
+                    if (isPlayer(sender))
+                        Selection.get(player).setPos2(player.getLocation(), player);
+                    break;
                 case "create":
                     if (validate(sender, true, "create")) { //todo: Проверка разрешенного количества регионов игрока в праве
                         if (args.length > 1) {
                             Selection selection = Selection.get(player);
-                            if (selection == null) {
-                                player.sendMessage(Message.inst.getMessage("Positions.NoSelectRegion"));
-                                return false;
-                            }
-
                             selection.create(args[1]);
                         }
                         else Print.toSender(sender, message.getMessage("Create.Usage"));
                     }
                     break;
+                case "remove":
+                    if (validate(sender, false, "remove")) {
+                        if (args.length > 1) {
+                            Region region = Region.getByName(args[1]);
+                            if (region != null) {
+                                if (region.getOwners().contains(player) || validate(sender, false, "removeAny")) {
+                                    region.remove();
+                                    Print.toSender(sender, message.getMessage("Remove.Successfully"));
+                                }
+                                else Print.toSender(sender, message.getMessage("Remove.YouArentOwner"));
+                            }
+                            else Print.toSender(sender, message.getMessage("Remove.NotExists"));
+                        }
+                        else Print.toSender(sender, message.getMessage("Remove.Usage"));
+                    }
+                    break;
+                case "reload":
+                    if (validate(sender, false, "reload")) {
+                        plugin.onDisable();
+                        plugin.enable();
+                    }
+                    break;
                 case "help":
                     Message.inst.getList("HelpPage").forEach(msg -> Print.toSender(sender, msg));
                     break;
-                default:
-                    Print.toSender(sender, message.getMessage("unknownCommand"));
             }
         }
+        Print.toSender(sender, message.getMessage("unknownCommand"));
         return false;
     }
 
     private static final String permPrefix = "freerg.";
     private boolean validate(CommandSender sender, boolean needPlayer, String permission) {
-        if (needPlayer && !(sender instanceof Player)) {
+        if (needPlayer && !(isPlayer(sender))) {
             Print.toSender(sender, message.getMessage("NotPlayer"));
             return false;
         }
@@ -71,4 +90,9 @@ public class Commands implements CommandExecutor
         }
         return true;
     }
+
+    private boolean isPlayer(CommandSender sender) {
+        return sender instanceof Player;
+    }
+
 }

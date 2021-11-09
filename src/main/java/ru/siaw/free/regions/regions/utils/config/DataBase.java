@@ -21,10 +21,6 @@ public class DataBase extends YAML
         inst = this;
     }
 
-    public String getString(String path) {
-        return configuration.getString(mainKey + path);
-    }
-
     public boolean getBoolean(String path) {
         return configuration.getBoolean(mainKey + path);
     }

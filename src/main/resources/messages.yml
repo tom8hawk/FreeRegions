@@ -13,7 +13,7 @@ Messages:
   HelpPage:
     - '&6FreeRegions &8| &fПомощь:'
     - ' &7База:'
-    - '  &6* &fВыдать премдет выделение региона - &6/rg list'
+    - '  &6* &fСписок регионов на сервере - &6/rg list'
     - '  &6* &fВыдать премдет выделение региона - &6/rg wand'
     - '  &6* &fВыделить первую точку региона - &6/rg pos1'
     - '  &6* &fВыделить вторую точку региона - &6/rg pos2'
@@ -23,10 +23,8 @@ Messages:
     - '  &6* &fРасширить регион - &6/rg expand [кол-во] [сторона]'
     - ' &7Участники:'
     - '  &6* &fДобавить участника в регион - &6/rg addmember [регион] [ник]'
-    - '  &6* &fДобавить модератора в регион - &6/rg addmoder [регион] [ник]'
     - '  &6* &fДобавить администратора в регион - &6/rg addowner [регион] [ник]'
     - '  &6* &fУдалить участника из региона - &6/rg delmember [регион] [ник]'
-    - '  &6* &fУдалить модератора из региона - &6/rg delmoder [регион] [ник]'
     - '  &6* &fУдалить администратора из региона - &6/rg delowner [регион] [ник]'
     - ' &7Другое:'
     - '  &6* &fУстановить флаг в регионе - &6/rg addflag [регион]'
@@ -40,7 +38,7 @@ Messages:
     Successfully: '&6FreeRegions &8| &fВы успешно расширили выделенную область'
     NoRegion: '&cОшибка, Для начала выделите регион!'
     NoNumber: '&cОшибка, значение %value не является числом!'
-    NoDirection: '&cFreeregions &8| &fОшибка, указана не верная сторона. Доступные стороны: &cNorth, East, South, West, Up, Down'
+    NoDirection: '&cFreeRegions &8| &fОшибка, указана не верная сторона. Доступные стороны: &cNorth, East, South, West, Up, Down'
   Positions:
     Successfully: '&6FreeRegions &8| &fВы успешно установили позицию &e%pos'
     NoSelectRegion: '&cFreeRegions &8| &fДля начала выделите регион!'
@@ -65,10 +63,10 @@ Messages:
   Remove:
     Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg remove [регион]'
     Successfully: '&6FreeRegions &8| &fВы успешно удалили регион &e%region'
-    NoExists: '&cFreeRegions &8| &fДанного региона не существует!'
+    NotExists: '&cFreeRegions &8| &fДанного региона не существует!'
+    YouArentOwner: '&cОшибка, Вы не владелец региона!'
   Roles:
     Member: 'Участник'
-    Moder: 'Модератор'
     Owner: 'Создатель'
   AddRole:
     Yourself: '&cFreeRegions &8| &fВы не можете добавить в регион сами себя!'

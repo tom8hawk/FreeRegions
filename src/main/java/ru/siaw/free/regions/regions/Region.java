@@ -73,6 +73,10 @@ public class Region
         return result;
     }
 
+    public void remove() {
+        regions.remove(this);
+    }
+
     public static void addOnline(Player p) {
         List<Boolean> found = new ArrayList<>();
         new Thread(() -> {

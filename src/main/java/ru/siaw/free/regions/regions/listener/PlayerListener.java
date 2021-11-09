@@ -55,10 +55,12 @@ public class PlayerListener implements Listener
         if (itemStack.getType() == Material.ARROW && displayName.equals("§eВыделитель региона")) {
             Action action = e.getAction();
             if (action == null) return;
+
             Selection selection = Selection.get(p);
-            if (selection == null) selection = new Selection(p);
+
             Block block = e.getClickedBlock();
             if (block == null || block.getType() == Material.AIR) return;
+
             Location location = block.getLocation();
             if (location == null) return;
 

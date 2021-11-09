@@ -3,7 +3,6 @@ package ru.siaw.free.regions.regions.utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import ru.siaw.free.regions.regions.Region;
-import ru.siaw.free.regions.regions.utils.config.DataBase;
 import ru.siaw.free.regions.regions.utils.config.Message;
 
 import java.util.HashMap;
@@ -35,7 +34,6 @@ public class Selection
                             }
                         }
                         Region region = new Region(name, pos1, pos2, player, false, true, false, false, false, false, true, false, false, true); // Для данных в сообщении
-                        DataBase.inst.writeRegion(region);
                         Print.toPlayer(player, Message.inst.getMessage("Create.Successfully").replace("%region", name)); // todo: Доделать
                     }
                 });
@@ -44,7 +42,8 @@ public class Selection
     }
 
     public static Selection get(Player player) {
-        return selections.get(player);
+        Selection selection = selections.get(player);
+        return selection == null ? new Selection(player) : selection;
     }
 
     public static void remove(Player player) {

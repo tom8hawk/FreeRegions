@@ -8,9 +8,15 @@ commands:
   rg:
     desription: Commands of the plugin itself/business trips
 permissions:
+  freerg.*:
+    default: op
   freeg.reload:
     default: op
   freeg.wand:
     default: op
   freeg.create:
+    default: op
+  freerg.remove:
+    default: op
+  freerpg.removeAny:
     default: op
