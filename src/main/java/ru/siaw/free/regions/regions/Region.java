@@ -1,9 +1,12 @@
 package ru.siaw.free.regions.regions;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import ru.siaw.free.regions.regions.utils.Other;
-import ru.siaw.free.regions.regions.utils.config.DataBase;
+import ru.siaw.free.regions.regions.utils.PlayerUtil;
+import ru.siaw.free.regions.regions.utils.Print;
+import ru.siaw.free.regions.regions.utils.config.Message;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,18 +15,20 @@ import java.util.List;
 public class Region
 {
     private static final List<Region> regions = new LinkedList<>(); // Все регионы
-    private final List<Player> onlinePlayers = new LinkedList<>(); // Игроки онлайн с региона
 
-    private final String name;
+    private String name;
     private final Location location1, location2;
+    private final ArrayList<Location> blocks = new ArrayList<>();
+    private final Player creator;
     private List<Player> owners = new ArrayList<>(), members = new ArrayList<>();
     private boolean pvp, mobSpawning, mobDamage, use, build, invincible, leavesFalling, explosion, itemDrop, entry;
 
-    public Region(String name, Location location1, Location location2, List<Player> owners, List<Player> members, boolean pvp, boolean mobSpawning, boolean mobDamage,
+    public Region(String name, Location location1, Location location2, Player creator, List<Player> owners, List<Player> members, boolean pvp, boolean mobSpawning, boolean mobDamage,
                   boolean use, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
-        this.name = Other.format(name);
+        this.name = name;
         this.location1 = location1;
         this.location2 = location2;
+        this.creator = creator;
         this.owners = owners;
         this.members = members;
 
@@ -39,13 +44,14 @@ public class Region
         this.entry = entry;
 
         regions.add(this);
+        countBlocks();
     }
 
     public Region(String name, Location location1, Location location2, Player creator, boolean pvp, boolean mobSpawning, boolean mobDamage,
                   boolean use, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
-        this.name = Other.format(name);
         this.location1 = location1;
         this.location2 = location2;
+        this.creator = creator;
         owners.add(creator);
 
         this.pvp = pvp;
@@ -59,55 +65,111 @@ public class Region
         this.itemDrop = itemDrop;
         this.entry = entry;
 
-        regions.add(this);
+        validate(name);
     }
 
     public static Region getByName(String name) { // Для комманд с названием региона
-        String inFormat = Other.format(name);
+        String lowerName = name.toLowerCase();
         Region result = null;
 
         for (Region region : regions) {
-            if (region.name.equals(inFormat))
+            if (region.getName().toLowerCase().equals(lowerName))
                 result = region;
         }
         return result;
     }
 
-    public void remove() {
-        regions.remove(this);
-    }
+    public static List<Region> getByLocation(Location... location) { //todo: Чуть позже
+        List<Region> toReturn = new ArrayList<>();
+        regions.forEach(region -> region.getBlocks().forEach(block -> {
+            for (Location loc : location)
+                if (loc.equals(block))
+                    toReturn.add(region);
+        }));
 
-    public static void addOnline(Player p) {
-        List<Boolean> found = new ArrayList<>();
+        return toReturn;
+    }
+    
+    private boolean counted = false;
+    private void countBlocks() {
         new Thread(() -> {
-            synchronized(regions) {
-                regions.forEach(rg -> {
-                    if (rg.members.contains(p) || rg.owners.contains(p)) { // Где-то есть наш игрок?
-                        rg.onlinePlayers.add(p);
-                        found.add(true);
-                    }
-                });
-                if (found.isEmpty()) // Нигде нету?
-                    DataBase.inst.readRegion(p); // Читаем приват, связанный с этим игроком
+            synchronized (blocks) {
+                double xMin, yMin, zMin;
+                double xMax, yMax, zMax;
+                double x, y, z;
+
+                xMin = Math.min(location1.getBlockX(), location2.getBlockX());
+                yMin = Math.min(location1.getBlockY(), location2.getBlockY());
+                zMin = Math.min(location1.getBlockZ(), location2.getBlockZ());
+
+                xMax = Math.max(location1.getBlockX(), location2.getBlockX());
+                yMax = Math.max(location1.getBlockY(), location2.getBlockY());
+                zMax = Math.max(location1.getBlockZ(), location2.getBlockZ());
+
+                World w = location1.getWorld();
+                for (x = xMin; x <= xMax; x ++)
+                    for (y = yMin; y <= yMax; y ++)
+                        for (z = zMin; z <= zMax; z ++)
+                            blocks.add(new Location(w, x, y, z));
+                counted = true;
             }
         }).start();
     }
 
-    public static void removeOnline(Player p) { // На выходе игрока с сервера
+    private void validate(String name) {
         new Thread(() -> {
             synchronized (regions) {
-                regions.forEach(rg -> {
-                    if (rg.onlinePlayers.contains(p)) { // В каком привате есть наш игрок?
-                        rg.onlinePlayers.remove(p);
-
-                        if (rg.onlinePlayers.isEmpty()) { // Остались ли игроки онлайн в этом привате?
-                            DataBase.inst.writeRegion(rg);
-                            regions.remove(rg);
+                if (!counted) {
+                    countBlocks();
+                    while (!counted) {
+                        try {
+                            Thread.sleep(5);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
-                });
+                }
+
+                PlayerUtil util = new PlayerUtil(creator);
+                int limitOfBlocks = util.getLimitOfBlocks();
+
+                if (blocks.size() > limitOfBlocks) {
+                    creator.sendMessage(Message.inst.getMessage("Create.BlocksLimit").replace("%limit", String.valueOf(limitOfBlocks)));
+                    return;
+                }
+
+                int regionsCount = 0;
+                String lowerName = name.toLowerCase();
+
+                for (Region rg : regions) {
+                    if (rg.getCreator().equals(creator))
+                        regionsCount++;
+
+                    String rgLowerName = rg.getName().toLowerCase();
+                    if (rgLowerName.equals(lowerName)) {
+                        Print.toPlayer(creator, Message.inst.getMessage("Create.Exists"));
+                        return;
+                    }
+                    if (blocks.stream().anyMatch(element -> rg.getBlocks().contains(element))) {
+                        Print.toPlayer(creator, Message.inst.getMessage("Create.OtherRegions").replace("%other", name));
+                        return;
+                    }
+                }
+
+                if (regionsCount > util.getLimitOfRegions()) {
+                    Print.toPlayer(creator, Message.inst.getMessage("Create.RegionCountLimit"));
+                    return;
+                }
+
+                this.name = name;
+                regions.add(this);
+                Print.toPlayer(creator, Message.inst.getMessage("Create.Successfully").replace("%region", name).replace("%size", String.valueOf(blocks.size())));
             }
         }).start();
+    }
+
+    public void remove() {
+        regions.remove(this);
     }
 
     // Добавление в списки
@@ -146,6 +208,14 @@ public class Region
         return location2;
     }
 
+    public ArrayList<Location> getBlocks() {
+        return blocks;
+    }
+
+    public Player getCreator() {
+        return creator;
+    }
+
     public List<Player> getOwners() {
         return owners;
     }
@@ -160,10 +230,6 @@ public class Region
 
     public void setMembers(List<Player> members) {
         this.members = members;
-    }
-
-    public List<Player> getOnlinePlayers() {
-        return onlinePlayers;
     }
 
     public boolean isPvp() {

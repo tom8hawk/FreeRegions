@@ -10,13 +10,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import ru.siaw.free.regions.regions.Main;
-import ru.siaw.free.regions.regions.Region;
 import ru.siaw.free.regions.regions.utils.Selection;
 
 import java.util.ArrayList;
@@ -27,15 +25,8 @@ public class PlayerListener implements Listener
     protected final Main plugin = Main.inst;
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onJoin(PlayerJoinEvent e) {
-        Region.addOnline(e.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent e) {
-        Player player = e.getPlayer();
-        Region.removeOnline(player);
-        Selection.remove(player);
+        Selection.remove(e.getPlayer());
     }
 
     List<Player> timer = new ArrayList<>();

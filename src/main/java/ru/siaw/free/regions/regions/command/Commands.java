@@ -28,24 +28,24 @@ public class Commands implements CommandExecutor
                         sender.sendMessage(Message.inst.getMessage("Wand"));
                         player.getInventory().addItem(Other.createItemStack(Material.ARROW, "§eВыделитель региона", " §7ЛКМ => 1 позиция", " §7ПКМ => 2 позиция"));
                     }
-                    break;
+                    return false;
                 case "pos1":
                     if (isPlayer(sender))
                         Selection.get(player).setPos1(player.getLocation(), player);
-                    break;
+                    return false;
                 case "pos2":
                     if (isPlayer(sender))
                         Selection.get(player).setPos2(player.getLocation(), player);
-                    break;
+                    return false;
                 case "create":
-                    if (validate(sender, true, "create")) { //todo: Проверка разрешенного количества регионов игрока в праве
+                    if (validate(sender, true, "create")) {
                         if (args.length > 1) {
-                            Selection selection = Selection.get(player);
-                            selection.create(args[1]);
+                            Selection.get(player).create(args[1]);
                         }
-                        else Print.toSender(sender, message.getMessage("Create.Usage"));
+                        else
+                            Print.toSender(sender, message.getMessage("Create.Usage"));
                     }
-                    break;
+                    return false;
                 case "remove":
                     if (validate(sender, false, "remove")) {
                         if (args.length > 1) {
@@ -61,16 +61,16 @@ public class Commands implements CommandExecutor
                         }
                         else Print.toSender(sender, message.getMessage("Remove.Usage"));
                     }
-                    break;
+                    return false;
                 case "reload":
                     if (validate(sender, false, "reload")) {
                         plugin.onDisable();
                         plugin.enable();
                     }
-                    break;
+                    return false;
                 case "help":
                     Message.inst.getList("HelpPage").forEach(msg -> Print.toSender(sender, msg));
-                    break;
+                    return false;
             }
         }
         Print.toSender(sender, message.getMessage("unknownCommand"));

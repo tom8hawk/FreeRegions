@@ -19,7 +19,7 @@ public abstract class YAML
         mainKey = (fileName.equals("data.yml") ? "Regions" : "Messages") + ".";
 
         if (!file.exists()) {
-            plugin.saveResource(fileName, true);;
+            plugin.saveResource(fileName, true);
         }
         load();
     }

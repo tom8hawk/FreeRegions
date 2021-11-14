@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Other {
+public class Other
+{
     public static ItemStack createItemStack(Material material, String... lore) {
         ItemStack stack = new ItemStack(material);
         ItemMeta meta = stack.getItemMeta();
@@ -21,11 +22,5 @@ public class Other {
 
         stack.setItemMeta(meta);
         return stack;
-    }
-
-    public static String format(String string) {
-        String lowerCase = string.toLowerCase();
-        String at0 = String.valueOf(lowerCase.charAt(0));
-        return lowerCase.replace(at0, at0.toUpperCase()) ;
     }
 }

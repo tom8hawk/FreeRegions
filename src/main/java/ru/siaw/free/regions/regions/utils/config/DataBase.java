@@ -21,6 +21,10 @@ public class DataBase extends YAML
         inst = this;
     }
 
+    public String get(String path) {
+        return configuration.getString(mainKey + path);
+    }
+
     public boolean getBoolean(String path) {
         return configuration.getBoolean(mainKey + path);
     }
@@ -29,44 +33,40 @@ public class DataBase extends YAML
         return configuration.getStringList(mainKey + path);
     }
 
-    public void readRegion(Player p) {
+    public void readRegions() {
         new Thread(() -> {
             synchronized (configuration) {
                 configuration.getKeys(true).forEach(key -> {
                     String[] splits = key.split("//.");
                     if (splits.length > 2) {
                         String regionName = splits[1];
+
                         List<String> owners = getList(regionName + ".owners");
                         List<String> members = getList(regionName + ".members");
 
-                        String playerUUID = p.getUniqueId().toString();
-                        if (owners.contains(playerUUID) || members.contains(playerUUID)) {
-                            List<String> location1 = getList(regionName + ".location1");
-                            List<String> location2 = getList(regionName + ".location2");
-                            World world = Bukkit.getWorld(location1.get(0));
+                        List<String> location1 = getList(regionName + ".location1");
+                        List<String> location2 = getList(regionName + ".location2");
+                        World world = Bukkit.getWorld(location1.get(0));
 
-                            List<Double> loc1 = new ArrayList<>();
-                            for (String s : location1.get(1).split(";")) {
-                                loc1.add(Double.parseDouble(s));
-                            }
-                            List<Double> loc2 = new ArrayList<>();
-                            for (String s : location2.get(0).split(";")) {
-                                loc2.add(Double.parseDouble(s));
-                            }
+                        ArrayList<Double> loc1 = new ArrayList<>();
+                        for (String s : location1.get(1).split(";"))
+                            loc1.add(Double.parseDouble(s));
+                        ArrayList<Double> loc2 = new ArrayList<>();
+                        for (String s : location2.get(0).split(";"))
+                            loc2.add(Double.parseDouble(s));
 
-                            List<Player> ownersPlayer = new ArrayList<>();
-                            owners.forEach(pUuid -> ownersPlayer.add(Bukkit.getPlayer(UUID.fromString(pUuid))));
+                        List<Player> ownersPlayer = new ArrayList<>();
+                        owners.forEach(pUuid -> ownersPlayer.add(Bukkit.getPlayer(UUID.fromString(pUuid))));
 
-                            List<Player> membersPlayer = new ArrayList<>();
-                            members.forEach(pUuid -> membersPlayer.add(Bukkit.getPlayer(UUID.fromString(pUuid))));
+                        List<Player> membersPlayer = new ArrayList<>();
+                        members.forEach(pUuid -> membersPlayer.add(Bukkit.getPlayer(UUID.fromString(pUuid))));
 
-                            if (world != null && loc1.size() == 3 && loc2.size() == 3) {
-                                new Region(regionName, new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc1.get(2)),
-                                        ownersPlayer, membersPlayer, getBoolean(regionName + ".pvp"), getBoolean(regionName + ".mob-spawning"),
-                                        getBoolean(regionName + ".mob-damage"), getBoolean(regionName + ".use"), getBoolean(regionName + ".build"),
-                                        getBoolean(regionName + ".invincible"), getBoolean(regionName + ".leaves-falling"), getBoolean(regionName + ".explosion"),
-                                        getBoolean(regionName + ".item-drop"), getBoolean(regionName + ".entry"));
-                            }
+                        if (world != null && loc1.size() == 3 && loc2.size() == 3) {
+                            new Region(regionName, new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc1.get(2)),
+                                    Bukkit.getPlayer(UUID.fromString(get(regionName + ".creator"))), ownersPlayer, membersPlayer, getBoolean(regionName + ".pvp"),
+                                    getBoolean(regionName + ".mob-spawning"), getBoolean(regionName + ".mob-damage"), getBoolean(regionName + ".use"),
+                                    getBoolean(regionName + ".build"), getBoolean(regionName + ".invincible"), getBoolean(regionName + ".leaves-falling"),
+                                    getBoolean(regionName + ".explosion"), getBoolean(regionName + ".item-drop"), getBoolean(regionName + ".entry"));
                         }
                     }
                 });
@@ -77,9 +77,7 @@ public class DataBase extends YAML
     public void writeRegion(Region region) {
         new Thread(() -> {
             synchronized (configuration) {
-                String key = mainKey + region.getName();
-                configuration.set(key, null);
-                key += ".";
+                String key = mainKey + region.getName() + ".";
 
                 Location location1 = region.getLocation1();
                 List<String> loc1 = new ArrayList<>();
@@ -91,6 +89,8 @@ public class DataBase extends YAML
                 List<String> loc2 = new ArrayList<>();
                 loc2.add(location2.getBlockX() + ";" + location2.getBlockY() + ";" + location2.getBlockZ());
                 configuration.set(key + "location2", loc2);
+
+                configuration.set(key + "creator", region.getCreator().getUniqueId().toString());
 
                 List<String> ownersUUIDs = new ArrayList<>();
                 region.getOwners().forEach(p -> ownersUUIDs.add(p.getUniqueId().toString()));
@@ -127,7 +127,7 @@ public class DataBase extends YAML
         } catch (IOException |org.bukkit.configuration.InvalidConfigurationException e) {
             Print.toConsole("Исключение при загрузке списка приватов! " + e.getMessage());
         }
-        Bukkit.getOnlinePlayers().forEach(Region::addOnline);
+        readRegions();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> Region.getRegions().forEach(this::writeRegion), 300L, 300L);
     }
 }

@@ -21,20 +21,13 @@ public class Selection
         new Thread(() -> {
             synchronized (selections) {
                 selections.forEach((player, selection) -> {
-                    if (pos1 == null || pos2 == null) {
-                        Print.toPlayer(player, Message.inst.getMessage("Positions.NoSelectRegion"));
-                        return;
-                    }
-
                     if (selection.equals(this)) {
-                        for (Region region : Region.getRegions()) {
-                            if (region.getName().equals(Other.format(name))) {
-                                Print.toPlayer(player, Message.inst.getMessage("Create.Exists"));
-                                return;
-                            }
+                        if (pos1 == null || pos2 == null) {
+                            Print.toPlayer(player, Message.inst.getMessage("Positions.NoSelectRegion"));
+                            return;
                         }
-                        Region region = new Region(name, pos1, pos2, player, false, true, false, false, false, false, true, false, false, true); // Для данных в сообщении
-                        Print.toPlayer(player, Message.inst.getMessage("Create.Successfully").replace("%region", name)); // todo: Доделать
+
+                        new Region(name, pos1, pos2, player, false, true, false, false, false, false, true, false, false, true);
                     }
                 });
             }

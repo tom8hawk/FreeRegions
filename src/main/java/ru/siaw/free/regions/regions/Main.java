@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import ru.siaw.free.regions.regions.command.Commands;
 import ru.siaw.free.regions.regions.listener.PlayerListener;
 import ru.siaw.free.regions.regions.utils.Print;
+import ru.siaw.free.regions.regions.utils.Selection;
 import ru.siaw.free.regions.regions.utils.config.Message;
 import ru.siaw.free.regions.regions.utils.config.DataBase;
 
@@ -38,7 +39,11 @@ public final class Main extends JavaPlugin
     @Override
     public void onDisable() {
         Bukkit.getScheduler().cancelTasks(this);
+
         Region.getRegions().forEach(DataBase.inst::writeRegion);
+
+        Bukkit.getOnlinePlayers().forEach(Selection::remove);
+
         Print.toConsole("До новых встреч! :0");
     }
 }
