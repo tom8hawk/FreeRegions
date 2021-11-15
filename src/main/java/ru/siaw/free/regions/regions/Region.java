@@ -70,29 +70,31 @@ public class Region
 
     public static Region getByName(String name) { // Для комманд с названием региона
         String lowerName = name.toLowerCase();
-        Region result = null;
 
         for (Region region : regions) {
             if (region.getName().toLowerCase().equals(lowerName))
-                result = region;
+                return region;
         }
-        return result;
+        return null;
     }
 
-    public static List<Region> getByLocation(Location... location) { //todo: Чуть позже
-        List<Region> toReturn = new ArrayList<>();
+    public static Region getByLocation(Location... location) {
+        Region[] toReturn = new Region[1];
         regions.forEach(region -> region.getBlocks().forEach(block -> {
-            for (Location loc : location)
-                if (loc.equals(block))
-                    toReturn.add(region);
+            for (Location loc : location) {
+                if (loc.equals(block)) {
+                    toReturn[0] = region;
+                    return;
+                }
+            }
         }));
 
-        return toReturn;
+        return toReturn[0];
     }
     
-    private boolean counted = false;
+    Thread countThread;
     private void countBlocks() {
-        new Thread(() -> {
+        countThread = new Thread(() -> {
             synchronized (blocks) {
                 double xMin, yMin, zMin;
                 double xMax, yMax, zMax;
@@ -111,23 +113,19 @@ public class Region
                     for (y = yMin; y <= yMax; y ++)
                         for (z = zMin; z <= zMax; z ++)
                             blocks.add(new Location(w, x, y, z));
-                counted = true;
             }
-        }).start();
+        });
+        countThread.start();
     }
 
     private void validate(String name) {
         new Thread(() -> {
             synchronized (regions) {
-                if (!counted) {
-                    countBlocks();
-                    while (!counted) {
-                        try {
-                            Thread.sleep(5);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                countBlocks();
+                try {
+                    countThread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
                 PlayerUtil util = new PlayerUtil(creator);

@@ -10,13 +10,15 @@ commands:
 permissions:
   freerg.*:
     default: op
-  freeg.reload:
+  freerg.reload:
     default: op
-  freeg.wand:
+  freerg.wand:
     default: op
-  freeg.create:
+  freerg.create:
     default: op
   freerg.remove:
     default: op
-  freerpg.removeAny:
+  freerg.removeAny:
+    default: op
+  freerg.bypass:
     default: op

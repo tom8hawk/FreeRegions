@@ -15,8 +15,7 @@ public final class Message extends YAML
     }
 
     public String getMessage(String path) {
-        String output = configuration.getString(mainKey + path);
-        return ChatColor.translateAlternateColorCodes('&', output);
+        return ChatColor.translateAlternateColorCodes('&', configuration.getString(mainKey + path));
     }
 
     public List<String> getList(String path) {
