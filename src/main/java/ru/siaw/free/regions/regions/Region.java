@@ -91,7 +91,11 @@ public class Region
 
         return toReturn[0];
     }
-    
+
+    public boolean isInRegion(Player player) {
+        return owners.contains(player) || members.contains(player);
+    }
+
     Thread countThread;
     private void countBlocks() {
         countThread = new Thread(() -> {
