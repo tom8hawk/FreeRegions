@@ -9,7 +9,8 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerUtil {
+public class PlayerUtil
+{
     private final Player player;
 
     public PlayerUtil(Player player) {
