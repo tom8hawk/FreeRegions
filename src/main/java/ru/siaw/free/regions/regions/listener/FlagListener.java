@@ -1,6 +1,5 @@
 package ru.siaw.free.regions.regions.listener;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -8,6 +7,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -55,7 +55,7 @@ public class FlagListener implements Listener
 
             if (!bypass(builder) && !region.isBuild() && !region.isInRegion(builder)) {
                 e.setCancelled(true);
-                Print.toPlayer(builder, Message.inst.getMessage("Flags.notBuild"));
+                Print.toPlayer(builder, Message.inst.getMessage("Flags.NotBuild"));
             }
         }
     }
@@ -69,7 +69,7 @@ public class FlagListener implements Listener
 
             if (!bypass(builder) && !region.isBuild() && !region.isInRegion(builder)) {
                 e.setCancelled(true);
-                Print.toPlayer(builder, Message.inst.getMessage("Flags.notBuild"));
+                Print.toPlayer(builder, Message.inst.getMessage("Flags.NotBuild"));
             }
         }
     }
@@ -103,24 +103,36 @@ public class FlagListener implements Listener
     }
 
     @EventHandler
-    public void onTnt(EntityExplodeEvent e) {
-        Region region = Region.getByLocation(e.getLocation());
+    public void onTnt(BlockExplodeEvent e) {
+        e.blockList().forEach(block -> {
+            Region region = Region.getByLocation(block.getLocation());
 
-        if (region != null && !region.isExplosion()) {
-            Entity entity = e.getEntity();
+            if (region != null && !region.isExplosion())
+                e.setCancelled(true);
+        });
+    }
 
-            if (entity instanceof TNTPrimed) {
-                Entity source = ((TNTPrimed) entity).getSource();
+    @EventHandler
+    public void onEntityExplode(EntityExplodeEvent e) {
+        e.blockList().forEach(block -> {
+            Region region = Region.getByLocation(block.getLocation());
 
-                if (source != null && source.isValid() && source instanceof Player) {
-                    Player player = (Player) source;
-                    if (!region.isInRegion(player) && !bypass(player))
-                        player.sendMessage(Message.inst.getMessage("Flags.NotBuild"));
-                    else return;
+            if (region != null && !region.isExplosion()) {
+                Entity entity = e.getEntity();
+
+                if (entity instanceof TNTPrimed) {
+                    Entity source = ((TNTPrimed) entity).getSource();
+
+                    if (source != null && source.isValid() && source instanceof Player) {
+                        Player player = (Player) source;
+                        if (!region.isInRegion(player) && !bypass(player))
+                            player.sendMessage(Message.inst.getMessage("Flags.NotBuild"));
+                        else return;
+                    }
                 }
+                e.setCancelled(true);
             }
-            e.setCancelled(true);
-        }
+        });
     }
 
     @EventHandler

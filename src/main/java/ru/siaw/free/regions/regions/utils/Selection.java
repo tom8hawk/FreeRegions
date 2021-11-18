@@ -28,7 +28,7 @@ public class Selection
                         }
 
                         new Region(name, pos1, pos2, player, false, true, false, false, false, false, true, false, false, true);
-                        remove(player);
+                        remove(player); //java.util.ConcurrentModificationException
                     }
                 });
             }

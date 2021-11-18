@@ -3,11 +3,12 @@ package ru.siaw.free.regions.regions;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.siaw.free.regions.regions.command.Commands;
+import ru.siaw.free.regions.regions.listener.FlagListener;
 import ru.siaw.free.regions.regions.listener.PlayerListener;
 import ru.siaw.free.regions.regions.utils.Print;
 import ru.siaw.free.regions.regions.utils.Selection;
-import ru.siaw.free.regions.regions.utils.config.Message;
 import ru.siaw.free.regions.regions.utils.config.DataBase;
+import ru.siaw.free.regions.regions.utils.config.Message;
 
 import java.io.File;
 
@@ -24,6 +25,7 @@ public final class Main extends JavaPlugin
         enable();
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+        Bukkit.getPluginManager().registerEvents(new FlagListener(), this);
         getCommand("rg").setExecutor(new Commands());
     }
 
@@ -38,8 +40,6 @@ public final class Main extends JavaPlugin
 
     @Override
     public void onDisable() {
-        Bukkit.getScheduler().cancelTasks(this);
-
         Region.getRegions().forEach(DataBase.inst::writeRegion);
 
         Bukkit.getOnlinePlayers().forEach(Selection::remove);

@@ -1,9 +1,10 @@
 package ru.siaw.free.regions.regions.utils.config;
 
-import java.io.IOException;
-import java.util.List;
 import org.bukkit.ChatColor;
 import ru.siaw.free.regions.regions.utils.Print;
+
+import java.io.IOException;
+import java.util.List;
 
 public final class Message extends YAML
 {
@@ -15,7 +16,8 @@ public final class Message extends YAML
     }
 
     public String getMessage(String path) {
-        return ChatColor.translateAlternateColorCodes('&', configuration.getString(mainKey + path));
+        String result = configuration.getString(mainKey + path);
+        return ChatColor.translateAlternateColorCodes('&', result != null ? result : "");
     }
 
     public List<String> getList(String path) {

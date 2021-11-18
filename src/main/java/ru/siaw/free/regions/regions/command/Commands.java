@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 import ru.siaw.free.regions.regions.Main;
 import ru.siaw.free.regions.regions.Region;
 import ru.siaw.free.regions.regions.utils.Other;
+import ru.siaw.free.regions.regions.utils.Print;
 import ru.siaw.free.regions.regions.utils.Selection;
 import ru.siaw.free.regions.regions.utils.config.Message;
-import ru.siaw.free.regions.regions.utils.Print;
 
 public class Commands implements CommandExecutor
 {

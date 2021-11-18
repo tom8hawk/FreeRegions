@@ -74,11 +74,11 @@ public class PlayerUtil
                     if (loc1 == null || loc2 == null || !loc1.equals(pos1) || !loc2.equals(pos2)) break;
 
                     effect.forEach(loc -> {
-                        player.spigot().playEffect(loc, Effect.CLOUD, 0, 0, 0.0F, 0.0F, 0.0F, 0.0F, 10, 100);
+                        player.spigot().playEffect(loc, Effect.CLOUD, 0, 0, 0.0F, 0.0F, 0.0F, 0.0F, 30, 100);
                         player.spigot().playEffect(loc, Effect.FLAME, 0, 0, 0.0F, 0.0F, 0.0F, 0.0F, 1, 100);
                     });
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

@@ -1,6 +1,7 @@
 package ru.siaw.free.regions.regions;
 
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import ru.siaw.free.regions.regions.utils.PlayerUtil;
@@ -18,11 +19,11 @@ public class Region
     private String name;
     private final Location location1, location2;
     private final ArrayList<Location> blocks = new ArrayList<>();
-    private final Player creator;
-    private List<Player> owners = new ArrayList<>(), members = new ArrayList<>();
+    private final OfflinePlayer creator;
+    private List<OfflinePlayer> owners = new ArrayList<>(), members = new ArrayList<>();
     private boolean pvp, mobSpawning, mobDamage, use, build, invincible, leavesFalling, explosion, itemDrop, entry;
 
-    public Region(String name, Location location1, Location location2, Player creator, List<Player> owners, List<Player> members, boolean pvp, boolean mobSpawning, boolean mobDamage,
+    public Region(String name, Location location1, Location location2, OfflinePlayer creator, List<OfflinePlayer> owners, List<OfflinePlayer> members, boolean pvp, boolean mobSpawning, boolean mobDamage,
                   boolean use, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
         this.name = name;
         this.location1 = location1;
@@ -78,17 +79,12 @@ public class Region
     }
 
     public static Region getByLocation(Location... location) {
-        Region[] toReturn = new Region[1];
-        regions.forEach(region -> region.getBlocks().forEach(block -> {
-            for (Location loc : location) {
-                if (loc.equals(block)) {
-                    toReturn[0] = region;
-                    return;
-                }
-            }
-        }));
-
-        return toReturn[0];
+        for (Region region : regions)
+            for (Location block : region.getBlocks())
+                for (Location loc : location)
+                    if (loc.equals(block))
+                        return region;
+        return null;
     }
 
     public boolean isInRegion(Player player) {
@@ -131,6 +127,7 @@ public class Region
                     e.printStackTrace();
                 }
 
+                Player creator = (Player) this.creator;
                 PlayerUtil util = new PlayerUtil(creator);
                 int limitOfBlocks = util.getLimitOfBlocks();
 
@@ -152,7 +149,7 @@ public class Region
                         return;
                     }
                     if (blocks.stream().anyMatch(element -> rg.getBlocks().contains(element))) {
-                        Print.toPlayer(creator, Message.inst.getMessage("Create.OtherRegions").replace("%other", name));
+                        Print.toPlayer(creator, Message.inst.getMessage("Create.OtherRegions").replace("%other", rg.getName()));
                         return;
                     }
                 }
@@ -213,24 +210,16 @@ public class Region
         return blocks;
     }
 
-    public Player getCreator() {
+    public OfflinePlayer getCreator() {
         return creator;
     }
 
-    public List<Player> getOwners() {
+    public List<OfflinePlayer> getOwners() {
         return owners;
     }
 
-    public void setOwners(List<Player> owners) {
-        this.owners = owners;
-    }
-
-    public List<Player> getMembers() {
+    public List<OfflinePlayer> getMembers() {
         return members;
-    }
-
-    public void setMembers(List<Player> members) {
-        this.members = members;
     }
 
     public boolean isPvp() {
