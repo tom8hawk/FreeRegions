@@ -29,25 +29,23 @@ public class DataBase extends YAML
                     String[] splits = key.split("\\.");
 
                     if (splits.length == 2) {
-                        String regionName = splits[1];
-
                         List<OfflinePlayer> owners = new ArrayList<>();
-                        configuration.getStringList(mainKey + regionName + ".owners").forEach(uuid -> owners.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid))));
+                        configuration.getStringList(mainKey + splits[1] + ".owners").forEach(uuid -> owners.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid))));
 
                         List<OfflinePlayer> members = new ArrayList<>();
-                        configuration.getStringList(mainKey + regionName + ".members").forEach(uuid -> members.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid))));
+                        configuration.getStringList(mainKey + splits[1] + ".members").forEach(uuid -> members.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid))));
 
-                        World world = Bukkit.getWorld(configuration.getString(mainKey + regionName + ".world"));
+                        World world = Bukkit.getWorld(configuration.getString(mainKey + splits[1] + ".world"));
 
-                        List<Double> loc1 = configuration.getDoubleList(mainKey + regionName + ".location1");
-                        List<Double> loc2 = configuration.getDoubleList(mainKey + regionName + ".location2");
+                        List<Double> loc1 = configuration.getDoubleList(mainKey + splits[1] + ".location1");
+                        List<Double> loc2 = configuration.getDoubleList(mainKey + splits[1] + ".location2");
 
-                        new Region(regionName, new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc1.get(2)),
-                                Bukkit.getOfflinePlayer(UUID.fromString(configuration.getString(mainKey + regionName + ".creator"))), owners, members,
-                                getBoolean(regionName + ".pvp"), getBoolean(regionName + ".mob-spawning"), getBoolean(regionName + ".mob-damage"),
-                                getBoolean(regionName + ".use"), getBoolean(regionName + ".build"), getBoolean(regionName + ".invincible"),
-                                getBoolean(regionName + ".leaves-falling"), getBoolean(regionName + ".explosion"), getBoolean(regionName + ".item-drop"),
-                                getBoolean(regionName + ".entry"));
+                        new Region(splits[1], new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc2.get(2)),
+                                Bukkit.getOfflinePlayer(UUID.fromString(configuration.getString(mainKey + splits[1] + ".creator"))), owners, members,
+                                getBoolean(splits[1] + ".pvp"), getBoolean(splits[1] + ".mob-spawning"), getBoolean(splits[1] + ".mob-damage"),
+                                getBoolean(splits[1] + ".use"), getBoolean(splits[1] + ".build"), getBoolean(splits[1] + ".invincible"),
+                                getBoolean(splits[1] + ".leaves-falling"), getBoolean(splits[1] + ".explosion"), getBoolean(splits[1] + ".item-drop"),
+                                getBoolean(splits[1] + ".entry"));
                     }
                 });
             }

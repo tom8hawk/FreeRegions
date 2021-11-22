@@ -2,7 +2,6 @@ package ru.siaw.free.regions;
 
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import ru.siaw.free.regions.utils.PlayerUtil;
 import ru.siaw.free.regions.utils.Print;
@@ -43,17 +42,7 @@ public class Region
         this.itemDrop = itemDrop;
         this.entry = entry;
 
-        new Thread(() -> {
-            synchronized (regions) {
-                countBlocks();
-                try {
-                    countThread.join();
-                    regions.add(this);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        countBlocks(true);
     }
 
     public Region(String name, Location location1, Location location2, Player creator, boolean pvp, boolean mobSpawning, boolean mobDamage,
@@ -96,27 +85,24 @@ public class Region
         return owners.contains(player) || members.contains(player);
     }
 
-    Thread countThread;
-    private void countBlocks() {
+    private Thread countThread;
+    private void countBlocks(boolean add) {
         countThread = new Thread(() -> {
             synchronized (blocks) {
-                double xMin, yMin, zMin;
-                double xMax, yMax, zMax;
-                double x, y, z;
+                int topBlockX = (Math.max(location1.getBlockX(), location2.getBlockX()));
+                int bottomBlockX = (Math.min(location1.getBlockX(), location2.getBlockX()));
 
-                xMin = Math.min(location1.getBlockX(), location2.getBlockX());
-                yMin = Math.min(location1.getBlockY(), location2.getBlockY());
-                zMin = Math.min(location1.getBlockZ(), location2.getBlockZ());
+                int topBlockY = (Math.max(location1.getBlockY(), location2.getBlockY()));
+                int bottomBlockY = (Math.min(location1.getBlockY(), location2.getBlockY()));
 
-                xMax = Math.max(location1.getBlockX(), location2.getBlockX());
-                yMax = Math.max(location1.getBlockY(), location2.getBlockY());
-                zMax = Math.max(location1.getBlockZ(), location2.getBlockZ());
+                int topBlockZ = (Math.max(location1.getBlockZ(), location2.getBlockZ()));
+                int bottomBlockZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
 
-                World w = location1.getWorld();
-                for (x = xMin; x <= xMax; x ++)
-                    for (y = yMin; y <= yMax; y ++)
-                        for (z = zMin; z <= zMax; z ++)
-                            blocks.add(new Location(w, x, y, z));
+                for (int x = bottomBlockX; x <= topBlockX; x++)
+                    for (int z = bottomBlockZ; z <= topBlockZ; z++)
+                        for (int y = bottomBlockY; y <= topBlockY; y++)
+                            blocks.add(new Location(location1.getWorld(), x, y, z));
+                if (add) regions.add(this);
             }
         });
         countThread.start();
@@ -125,7 +111,7 @@ public class Region
     private void validate(String name) {
         new Thread(() -> {
             synchronized (regions) {
-                countBlocks();
+                countBlocks(false);
                 Player creator = (Player) this.creator;
                 PlayerUtil util = new PlayerUtil(creator);
 
