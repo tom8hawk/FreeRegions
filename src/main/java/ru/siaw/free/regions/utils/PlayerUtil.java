@@ -1,10 +1,11 @@
-package ru.siaw.free.regions.regions.utils;
+package ru.siaw.free.regions.utils;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import ru.siaw.free.regions.Selection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,8 +74,7 @@ public class PlayerUtil
 
                     if (loc1 == null || loc2 == null || !loc1.equals(pos1) || !loc2.equals(pos2)) break;
 
-                    effect.forEach(loc -> {
-                        player.spigot().playEffect(loc, Effect.CLOUD, 0, 0, 0.0F, 0.0F, 0.0F, 0.0F, 30, 100);
+                    effect.forEach(loc -> { player.spigot().playEffect(loc, Effect.CLOUD, 0, 0, 0.0F, 0.0F, 0.0F, 0.0F, 30, 100);
                         player.spigot().playEffect(loc, Effect.FLAME, 0, 0, 0.0F, 0.0F, 0.0F, 0.0F, 1, 100);
                     });
                     try {

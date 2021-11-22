@@ -1,7 +1,7 @@
-package ru.siaw.free.regions.regions.utils.config;
+package ru.siaw.free.regions.utils.config;
 
 import org.bukkit.configuration.file.YamlConfiguration;
-import ru.siaw.free.regions.regions.Main;
+import ru.siaw.free.regions.Main;
 
 import java.io.File;
 

@@ -1,4 +1,4 @@
-package ru.siaw.free.regions.regions.utils;
+package ru.siaw.free.regions.utils;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 public class Print
 {
     public static void toConsole(String msg) {
-        System.out.println(msg);
+        System.out.println("§eFreeRegions §8| §f" + msg);
     }
 
     public static void toSender(CommandSender sender, String msg) {

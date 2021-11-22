@@ -1,7 +1,7 @@
-package ru.siaw.free.regions.regions.utils.config;
+package ru.siaw.free.regions.utils.config;
 
 import org.bukkit.ChatColor;
-import ru.siaw.free.regions.regions.utils.Print;
+import ru.siaw.free.regions.utils.Print;
 
 import java.io.IOException;
 import java.util.List;

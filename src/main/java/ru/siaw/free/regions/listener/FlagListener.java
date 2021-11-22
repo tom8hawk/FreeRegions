@@ -1,10 +1,12 @@
-package ru.siaw.free.regions.regions.listener;
+package ru.siaw.free.regions.listener;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
@@ -17,9 +19,12 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import ru.siaw.free.regions.regions.Region;
-import ru.siaw.free.regions.regions.utils.Print;
-import ru.siaw.free.regions.regions.utils.config.Message;
+import ru.siaw.free.regions.Region;
+import ru.siaw.free.regions.utils.Print;
+import ru.siaw.free.regions.utils.config.Message;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FlagListener implements Listener
 {
@@ -82,8 +87,8 @@ public class FlagListener implements Listener
             Player player = e.getPlayer();
 
             if (!bypass(player) && !region.isEntry() && !region.isInRegion(player)) {
-                e.getPlayer().sendMessage(Message.inst.getMessage("Flags.NotMove"));
                 e.setCancelled(true);
+                e.getPlayer().sendMessage(Message.inst.getMessage("Flags.NotMove"));
             }
         }
     }
@@ -102,19 +107,22 @@ public class FlagListener implements Listener
         }
     }
 
-    @EventHandler
-    public void onTnt(BlockExplodeEvent e) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockExplode(BlockExplodeEvent e) {
+        List<Block> toRemove = new ArrayList<>();
         e.blockList().forEach(block -> {
             Region region = Region.getByLocation(block.getLocation());
 
             if (region != null && !region.isExplosion())
-                e.setCancelled(true);
+                toRemove.add(block);
         });
+        toRemove.forEach(block -> e.blockList().remove(block));
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityExplode(EntityExplodeEvent e) {
-        e.blockList().forEach(block -> {
+        List<Block> toRemove = new ArrayList<>();
+        for (Block block : e.blockList()) {
             Region region = Region.getByLocation(block.getLocation());
 
             if (region != null && !region.isExplosion()) {
@@ -125,14 +133,16 @@ public class FlagListener implements Listener
 
                     if (source != null && source.isValid() && source instanceof Player) {
                         Player player = (Player) source;
-                        if (!region.isInRegion(player) && !bypass(player))
-                            player.sendMessage(Message.inst.getMessage("Flags.NotBuild"));
-                        else return;
+
+                        if (region.isInRegion(player) || bypass(player)) continue;
+
+                        player.sendMessage(Message.inst.getMessage("Flags.NotBuild"));
                     }
                 }
-                e.setCancelled(true);
+                toRemove.add(block);
             }
-        });
+        }
+        toRemove.forEach(block -> e.blockList().remove(block));
     }
 
     @EventHandler
@@ -141,8 +151,8 @@ public class FlagListener implements Listener
         Player ejector = e.getPlayer();
 
         if (region != null && !region.isItemDrop() && !region.isInRegion(ejector) && !bypass(ejector)) {
-            e.getPlayer().sendMessage(Message.inst.getMessage("Flags.NotDrop"));
             e.setCancelled(true);
+            e.getPlayer().sendMessage(Message.inst.getMessage("Flags.NotDrop"));
         }
     }
 

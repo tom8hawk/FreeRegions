@@ -1,12 +1,12 @@
-package ru.siaw.free.regions.regions;
+package ru.siaw.free.regions;
 
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import ru.siaw.free.regions.regions.utils.PlayerUtil;
-import ru.siaw.free.regions.regions.utils.Print;
-import ru.siaw.free.regions.regions.utils.config.Message;
+import ru.siaw.free.regions.utils.PlayerUtil;
+import ru.siaw.free.regions.utils.Print;
+import ru.siaw.free.regions.utils.config.Message;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -43,8 +43,17 @@ public class Region
         this.itemDrop = itemDrop;
         this.entry = entry;
 
-        regions.add(this);
-        countBlocks();
+        new Thread(() -> {
+            synchronized (regions) {
+                countBlocks();
+                try {
+                    countThread.join();
+                    regions.add(this);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     public Region(String name, Location location1, Location location2, Player creator, boolean pvp, boolean mobSpawning, boolean mobDamage,
@@ -69,21 +78,17 @@ public class Region
     }
 
     public static Region getByName(String name) { // Для комманд с названием региона
-        String lowerName = name.toLowerCase();
-
-        for (Region region : regions) {
-            if (region.getName().toLowerCase().equals(lowerName))
+        for (Region region : regions)
+            if (region.getName().equalsIgnoreCase(name))
                 return region;
-        }
         return null;
     }
 
-    public static Region getByLocation(Location... location) {
+    public static Region getByLocation(Location location) {
         for (Region region : regions)
-            for (Location block : region.getBlocks())
-                for (Location loc : location)
-                    if (loc.equals(block))
-                        return region;
+            for (Location loc : region.getBlocks())
+                if (location.equals(loc))
+                    return region;
         return null;
     }
 
@@ -121,15 +126,15 @@ public class Region
         new Thread(() -> {
             synchronized (regions) {
                 countBlocks();
+                Player creator = (Player) this.creator;
+                PlayerUtil util = new PlayerUtil(creator);
+                int limitOfBlocks = util.getLimitOfBlocks();
+
                 try {
                     countThread.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
-                Player creator = (Player) this.creator;
-                PlayerUtil util = new PlayerUtil(creator);
-                int limitOfBlocks = util.getLimitOfBlocks();
 
                 if (blocks.size() > limitOfBlocks) {
                     creator.sendMessage(Message.inst.getMessage("Create.BlocksLimit").replace("%limit", String.valueOf(limitOfBlocks)));
@@ -137,18 +142,15 @@ public class Region
                 }
 
                 int regionsCount = 0;
-                String lowerName = name.toLowerCase();
-
                 for (Region rg : regions) {
-                    if (rg.getCreator().equals(creator))
+                    if (rg.creator.equals(creator))
                         regionsCount++;
 
-                    String rgLowerName = rg.getName().toLowerCase();
-                    if (rgLowerName.equals(lowerName)) {
+                    if (rg.name.equalsIgnoreCase(name)) {
                         Print.toPlayer(creator, Message.inst.getMessage("Create.Exists"));
                         return;
                     }
-                    if (blocks.stream().anyMatch(element -> rg.getBlocks().contains(element))) {
+                    if (blocks.stream().anyMatch(rg.blocks::contains)) {
                         Print.toPlayer(creator, Message.inst.getMessage("Create.OtherRegions").replace("%other", rg.getName()));
                         return;
                     }
@@ -172,19 +174,19 @@ public class Region
 
     // Добавление в списки
 
-    public void addOwner(Player owner) {
+    public void addOwner(OfflinePlayer owner) {
         owners.add(owner);
     }
 
-    public void removeOwner(Player owner) {
+    public void removeOwner(OfflinePlayer owner) {
         owners.remove(owner);
     }
 
-    public void addMember(Player member) {
+    public void addMember(OfflinePlayer member) {
         members.add(member);
     }
 
-    public void removeMember(Player member) {
+    public void removeMember(OfflinePlayer member) {
         members.remove(member);
     }
 

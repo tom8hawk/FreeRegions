@@ -1,9 +1,10 @@
-package ru.siaw.free.regions.regions.utils;
+package ru.siaw.free.regions;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import ru.siaw.free.regions.regions.Region;
-import ru.siaw.free.regions.regions.utils.config.Message;
+import ru.siaw.free.regions.utils.PlayerUtil;
+import ru.siaw.free.regions.utils.Print;
+import ru.siaw.free.regions.utils.config.Message;
 
 import java.util.HashMap;
 
@@ -20,6 +21,7 @@ public class Selection
     public void create(String name) {
         new Thread(() -> {
             synchronized (selections) {
+                Player[] toRemove = new Player[1];
                 selections.forEach((player, selection) -> {
                     if (selection.equals(this)) {
                         if (pos1 == null || pos2 == null) {
@@ -28,9 +30,10 @@ public class Selection
                         }
 
                         new Region(name, pos1, pos2, player, false, true, false, false, false, false, true, false, false, true);
-                        remove(player); //java.util.ConcurrentModificationException
+                        toRemove[0] = player;
                     }
                 });
+                selections.remove(toRemove[0]);
             }
         }).start();
     }

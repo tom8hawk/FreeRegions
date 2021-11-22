@@ -1,14 +1,13 @@
-package ru.siaw.free.regions.regions;
+package ru.siaw.free.regions;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.siaw.free.regions.regions.command.Commands;
-import ru.siaw.free.regions.regions.listener.FlagListener;
-import ru.siaw.free.regions.regions.listener.PlayerListener;
-import ru.siaw.free.regions.regions.utils.Print;
-import ru.siaw.free.regions.regions.utils.Selection;
-import ru.siaw.free.regions.regions.utils.config.DataBase;
-import ru.siaw.free.regions.regions.utils.config.Message;
+import ru.siaw.free.regions.command.Commands;
+import ru.siaw.free.regions.listener.FlagListener;
+import ru.siaw.free.regions.listener.PlayerListener;
+import ru.siaw.free.regions.utils.Print;
+import ru.siaw.free.regions.utils.config.DataBase;
+import ru.siaw.free.regions.utils.config.Message;
 
 import java.io.File;
 

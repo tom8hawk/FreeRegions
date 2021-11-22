@@ -69,7 +69,6 @@ Messages:
     Member: 'Участник'
     Owner: 'Создатель'
   AddRole:
-    Yourself: '&cFreeRegions &8| &fВы не можете добавить в регион сами себя!'
     Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg %subcommand [регион] [ник]'
     Successfully: '&6FreeRegions &8| &fВы успешно добававили %player &fв регион &e%region &fпод ролью &e%role'
     AlreadyInRegion: '&cFreeRegions &8| &fДанный игрок уже состоит в привате!'
@@ -81,7 +80,8 @@ Messages:
     Successfully: '&6FreeRegions &8| &fВы успешно удалили %player &fиз региона &e%region'
     NoInRegion: '&cFreeRegions &8| &fДанного игрока нет в привате!'
     NotFound: '&cFreeRegions &8| &fДанный игрок в списке игроков роли "&e%role&f" не найден!'
-    NoExists: '&cFreeRegions &8| &fДанного региона не существует!'
+    Single: '&cFreeRegions &8| &fВ привате не может быть меньше одного владельца!'
+    NotExists: '&cFreeRegions &8| &fДанного региона не существует!'
     NoPermissions: '&cВы не можете удалять игроков из привата!'
   AddFlag:
     Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg addflag [регион]'
@@ -98,8 +98,7 @@ Messages:
     Successfully: '&6FreeRegions &8| &fВы успешно убрали выделение'
     NotSelected: '&cОшибка, у Вас нет выделенных регионов!'
   Info:
-    YourInNotRegion: '&cОшибка, Вы не стоите в регионе!'
-    NoExists: '&cFreeRegions &8| &fДанного региона не существует!'
+    NotExists: '&cFreeRegions &8| &fДанного региона не существует или вы в нём не стоите!'
     Successfully:
       - ' '
       - '  '
@@ -107,10 +106,8 @@ Messages:
       - '  &7(%pos1 => %pos2)'
       - ''
       - ' &6* &fУстановленные флаги: &e%flags'
-      - ' &6* &fАдминистраторы: &e%owners'
-      - ' &6* &fМодераторы: &e%moders'
+      - ' &6* &fВладельцы: &e%owners'
       - ' &6* &fУчастники: &e%members'
-      - ' &6* &fДата создания: &e%date'
       - ' &6* &fРазмер: &e%size блоков'
       - ' '
       - '  '

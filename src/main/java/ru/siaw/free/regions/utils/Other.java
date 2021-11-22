@@ -1,6 +1,7 @@
-package ru.siaw.free.regions.regions.utils;
+package ru.siaw.free.regions.utils;
 
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -22,5 +23,14 @@ public class Other
 
         stack.setItemMeta(meta);
         return stack;
+    }
+
+    public static String playersToString(List<OfflinePlayer> list) {
+        StringBuilder builder = new StringBuilder(list.isEmpty() ? "Нет" : list.get(0).getName());
+        if (list.size() > 1) {
+            list.remove(0);
+            list.forEach(p -> builder.append(", ").append(p.getName()));
+        }
+        return builder.toString();
     }
 }

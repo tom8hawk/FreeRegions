@@ -1,7 +1,7 @@
 name: FreeRegions
 version: '${project.version}'
-main: ru.siaw.free.regions.regions.Main
-authors: [ tom8hawk ]
+main: ru.siaw.free.regions.Main
+author: tom8hawk
 website: siaw.ru
 
 commands:
@@ -19,6 +19,14 @@ permissions:
   freerg.remove:
     default: op
   freerg.removeAny:
+    default: op
+  freerg.delowner:
+    default: op
+  freerg.delOtherOwner:
+    default: op
+  freerg.info:
+    default: op
+  freerg.infoOther:
     default: op
   freerg.bypass:
     default: op

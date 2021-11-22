@@ -1,4 +1,4 @@
-package ru.siaw.free.regions.regions.listener;
+package ru.siaw.free.regions.listener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,8 +14,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import ru.siaw.free.regions.regions.Main;
-import ru.siaw.free.regions.regions.utils.Selection;
+import ru.siaw.free.regions.Main;
+import ru.siaw.free.regions.Selection;
 
 import java.util.ArrayList;
 import java.util.List;

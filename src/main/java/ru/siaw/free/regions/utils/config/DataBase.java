@@ -1,11 +1,12 @@
-package ru.siaw.free.regions.regions.utils.config;
+package ru.siaw.free.regions.utils.config;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import ru.siaw.free.regions.regions.Region;
-import ru.siaw.free.regions.regions.utils.Print;
+import org.bukkit.entity.Player;
+import ru.siaw.free.regions.Region;
+import ru.siaw.free.regions.utils.Print;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,20 +22,9 @@ public class DataBase extends YAML
         inst = this;
     }
 
-    public String get(String path) {
-        return configuration.getString(mainKey + path);
-    }
-
-    public boolean getBoolean(String path) {
-        return configuration.getBoolean(mainKey + path);
-    }
-
-    public List<String> getList(String path) {
-        return configuration.getStringList(mainKey + path);
-    }
-
+    Thread readThread;
     public void readRegions() {
-        new Thread(() -> {
+        readThread = new Thread(() -> {
             synchronized (configuration) {
                 configuration.getKeys(true).forEach(key -> {
                     String[] splits = key.split("\\.");
@@ -42,35 +32,27 @@ public class DataBase extends YAML
                     if (splits.length == 2) {
                         String regionName = splits[1];
 
-                        List<String> owners = getList(regionName + ".owners");
-                        List<String> members = getList(regionName + ".members");
+                        List<OfflinePlayer> owners = new ArrayList<>();
+                        configuration.getStringList(mainKey + regionName + ".owners").forEach(uuid -> owners.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid))));
 
-                        List<String> location1 = getList(regionName + ".location1");
-                        List<String> location2 = getList(regionName + ".location2");
-                        World world = Bukkit.getWorld(location1.get(0));
+                        List<OfflinePlayer> members = new ArrayList<>();
+                        configuration.getStringList(mainKey + regionName + ".members").forEach(uuid -> members.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid))));
 
-                        ArrayList<Double> loc1 = new ArrayList<>();
-                        for (String s : location1.get(1).split(";"))
-                            loc1.add(Double.parseDouble(s));
-                        ArrayList<Double> loc2 = new ArrayList<>();
-                        for (String s : location2.get(0).split(";"))
-                            loc2.add(Double.parseDouble(s));
+                        World world = Bukkit.getWorld(configuration.getString(mainKey + regionName + ".world"));
 
-                        List<OfflinePlayer> ownersPlayer = new ArrayList<>();
-                        owners.forEach(pUuid -> ownersPlayer.add(Bukkit.getOfflinePlayer(UUID.fromString(pUuid))));
-
-                        List<OfflinePlayer> membersPlayer = new ArrayList<>();
-                        members.forEach(pUuid -> membersPlayer.add(Bukkit.getOfflinePlayer(UUID.fromString(pUuid))));
+                        List<Double> loc1 = configuration.getDoubleList(mainKey + regionName + ".location1");
+                        List<Double> loc2 = configuration.getDoubleList(mainKey + regionName + ".location2");
 
                         new Region(regionName, new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc1.get(2)),
-                                Bukkit.getOfflinePlayer(UUID.fromString(get(regionName + ".creator"))), ownersPlayer, membersPlayer, getBoolean(regionName + ".pvp"),
+                                configuration.getOfflinePlayer(mainKey + regionName + ".creator"), owners, members, getBoolean(regionName + ".pvp"),
                                 getBoolean(regionName + ".mob-spawning"), getBoolean(regionName + ".mob-damage"), getBoolean(regionName + ".use"),
                                 getBoolean(regionName + ".build"), getBoolean(regionName + ".invincible"), getBoolean(regionName + ".leaves-falling"),
                                 getBoolean(regionName + ".explosion"), getBoolean(regionName + ".item-drop"), getBoolean(regionName + ".entry"));
                     }
                 });
             }
-        }).start();
+        });
+        readThread.start();
     }
 
     public void writeRegion(Region region) {
@@ -80,14 +62,21 @@ public class DataBase extends YAML
                     String key = mainKey + region.getName() + ".";
 
                     Location location1 = region.getLocation1();
-                    List<String> loc1 = new ArrayList<>();
-                    loc1.add(location1.getWorld().getName());
-                    loc1.add(location1.getBlockX() + ";" + location1.getBlockY() + ";" + location1.getBlockZ());
+
+                    configuration.set(key + "world", location1.getWorld().getName());
+
+                    List<Double> loc1 = new ArrayList<>();
+                    loc1.add(location1.getX());
+                    loc1.add(location1.getY());
+                    loc1.add(location1.getZ());
                     configuration.set(key + "location1", loc1);
 
                     Location location2 = region.getLocation2();
-                    List<String> loc2 = new ArrayList<>();
-                    loc2.add(location2.getBlockX() + ";" + location2.getBlockY() + ";" + location2.getBlockZ());
+
+                    List<Double> loc2 = new ArrayList<>();
+                    loc2.add(location2.getX());
+                    loc2.add(location2.getY());
+                    loc2.add(location2.getZ());
                     configuration.set(key + "location2", loc2);
 
                     configuration.set(key + "creator", region.getCreator().getUniqueId().toString());
@@ -121,25 +110,44 @@ public class DataBase extends YAML
         }).start();
     }
 
+    private boolean getBoolean(String path) {
+        return configuration.getBoolean(mainKey + path);
+    }
+
+    public static Thread writeThread;
     public void load() {
         try {
             configuration.load(file);
-            Print.toConsole("Список приватов заружен!");
+            Print.toConsole("База данных загружена!");
         } catch (IOException |org.bukkit.configuration.InvalidConfigurationException e) {
-            Print.toConsole("Исключение при загрузке списка приватов! " + e.getMessage());
+            e.printStackTrace();
         }
-        readRegions();
 
         new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(900000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            readRegions();
+            Print.toConsole("Чтение регионов...");
 
-                Region.getRegions().forEach(this::writeRegion);
+            try {
+                readThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+
+            Print.toConsole("Список регионов загружен!");
         }).start();
+
+        if (writeThread == null) {
+            writeThread = new Thread(() -> {
+                while (true) {
+                    try {
+                        Thread.sleep(900000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Region.getRegions().forEach(DataBase.inst::writeRegion);
+                }
+            });
+            writeThread.start();
+        }
     }
 }
