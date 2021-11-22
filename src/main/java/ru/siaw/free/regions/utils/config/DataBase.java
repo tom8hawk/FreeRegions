@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import ru.siaw.free.regions.Region;
 import ru.siaw.free.regions.utils.Print;
 
@@ -44,10 +43,11 @@ public class DataBase extends YAML
                         List<Double> loc2 = configuration.getDoubleList(mainKey + regionName + ".location2");
 
                         new Region(regionName, new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc1.get(2)),
-                                configuration.getOfflinePlayer(mainKey + regionName + ".creator"), owners, members, getBoolean(regionName + ".pvp"),
-                                getBoolean(regionName + ".mob-spawning"), getBoolean(regionName + ".mob-damage"), getBoolean(regionName + ".use"),
-                                getBoolean(regionName + ".build"), getBoolean(regionName + ".invincible"), getBoolean(regionName + ".leaves-falling"),
-                                getBoolean(regionName + ".explosion"), getBoolean(regionName + ".item-drop"), getBoolean(regionName + ".entry"));
+                                Bukkit.getOfflinePlayer(UUID.fromString(configuration.getString(mainKey + regionName + ".creator"))), owners, members,
+                                getBoolean(regionName + ".pvp"), getBoolean(regionName + ".mob-spawning"), getBoolean(regionName + ".mob-damage"),
+                                getBoolean(regionName + ".use"), getBoolean(regionName + ".build"), getBoolean(regionName + ".invincible"),
+                                getBoolean(regionName + ".leaves-falling"), getBoolean(regionName + ".explosion"), getBoolean(regionName + ".item-drop"),
+                                getBoolean(regionName + ".entry"));
                     }
                 });
             }

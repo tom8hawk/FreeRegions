@@ -128,7 +128,6 @@ public class Region
                 countBlocks();
                 Player creator = (Player) this.creator;
                 PlayerUtil util = new PlayerUtil(creator);
-                int limitOfBlocks = util.getLimitOfBlocks();
 
                 try {
                     countThread.join();
@@ -136,6 +135,7 @@ public class Region
                     e.printStackTrace();
                 }
 
+                int limitOfBlocks = util.getLimitOfBlocks();
                 if (blocks.size() > limitOfBlocks) {
                     creator.sendMessage(Message.inst.getMessage("Create.BlocksLimit").replace("%limit", String.valueOf(limitOfBlocks)));
                     return;
@@ -150,6 +150,7 @@ public class Region
                         Print.toPlayer(creator, Message.inst.getMessage("Create.Exists"));
                         return;
                     }
+
                     if (blocks.stream().anyMatch(rg.blocks::contains)) {
                         Print.toPlayer(creator, Message.inst.getMessage("Create.OtherRegions").replace("%other", rg.getName()));
                         return;
