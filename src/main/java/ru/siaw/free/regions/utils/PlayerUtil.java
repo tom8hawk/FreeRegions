@@ -67,6 +67,17 @@ public class PlayerUtil
                         effect.add(new Location(w, loc.getX(), nowY, loc.getZ()));
                 });
 
+                List<Location> corners = new ArrayList<>();
+                for (int num = 1; num <= 2; num++) {
+                    int y = num == 1 ? yMin : yMax;
+
+                    corners.add(new Location(w, xMin, y, zMin));
+                    corners.add(new Location(w, xMin, y, zMax));
+                    corners.add(new Location(w, xMax, y, zMin));
+                    corners.add(new Location(w, xMax, y, zMax));
+                }
+                effect.removeAll(corners);
+
                 while (true) {
                     Selection selection = Selection.get(player);
                     Location loc1 = selection.getPos1();
@@ -74,10 +85,13 @@ public class PlayerUtil
 
                     if (loc1 == null || loc2 == null || !loc1.equals(pos1) || !loc2.equals(pos2)) break;
 
-                    effect.forEach(loc -> { player.spigot().playEffect(loc, Effect.CLOUD, 0, 0, 0.0F, 0.0F, 0.0F, 0.0F, 30, 100);
-                        player.spigot().playEffect(loc, Effect.FLAME, 0, 0, 0.0F, 0.0F, 0.0F, 0.0F, 1, 100);
-                    });
+                    Thread cornersThread = new Thread(() -> corners.forEach(loc -> player.spigot().playEffect(loc, Effect.CLOUD, 0, 0, 0.0F, 0.0F, 0.0F, 0.0F, 30, 100)));
+                    cornersThread.start();
+
+                    effect.forEach(loc -> player.spigot().playEffect(loc, Effect.FLAME, 0, 0, 0.0F, 0.0F, 0.0F, 0.0F, 1, 100));
+
                     try {
+                        cornersThread.join();
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
