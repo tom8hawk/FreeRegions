@@ -1,5 +1,6 @@
 package ru.siaw.free.regions;
 
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import ru.siaw.free.regions.utils.PlayerUtil;
@@ -12,6 +13,7 @@ public class Selection
 {
     private static final HashMap<Player, Selection> selections = new HashMap<>();
 
+    @Getter
     private Location pos1, pos2;
 
     public Selection(Player player) {
@@ -61,13 +63,5 @@ public class Selection
         if (pos1 != null) new PlayerUtil(p).showEffect(pos1, pos2);
 
         Print.toPlayer(p, Message.inst.getMessage("Positions.Successfully").replace("%pos", String.format("%d, %d, %d", (int) pos2.getX(), (int) pos2.getY(), (int) pos2.getZ())));
-    }
-
-    public Location getPos1() {
-        return pos1;
-    }
-
-    public Location getPos2() {
-        return pos2;
     }
 }

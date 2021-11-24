@@ -1,5 +1,7 @@
 package ru.siaw.free.regions;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -13,14 +15,13 @@ import java.util.List;
 
 public class Region
 {
-    private static final List<Region> regions = new LinkedList<>(); // Все регионы
-
-    private String name;
-    private final Location location1, location2;
-    private final ArrayList<Location> blocks = new ArrayList<>();
-    private final OfflinePlayer creator;
-    private List<OfflinePlayer> owners = new ArrayList<>(), members = new ArrayList<>();
-    private boolean pvp, mobSpawning, mobDamage, use, build, invincible, leavesFalling, explosion, itemDrop, entry;
+    @Getter private static final List<Region> regions = new LinkedList<>(); // Все регионы
+    @Getter private String name;
+    @Getter private final Location location1, location2;
+    @Getter private final ArrayList<Location> blocks = new ArrayList<>();
+    @Getter private final OfflinePlayer creator;
+    @Getter private List<OfflinePlayer> owners = new ArrayList<>(), members = new ArrayList<>();
+    @Getter @Setter private boolean pvp, mobSpawning, mobDamage, use, build, invincible, leavesFalling, explosion, itemDrop, entry;
 
     public Region(String name, Location location1, Location location2, OfflinePlayer creator, List<OfflinePlayer> owners, List<OfflinePlayer> members, boolean pvp, boolean mobSpawning, boolean mobDamage,
                   boolean use, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
@@ -175,119 +176,5 @@ public class Region
 
     public void removeMember(OfflinePlayer member) {
         members.remove(member);
-    }
-
-    // Геттеры, сеттеры
-
-    public static List<Region> getRegions() {
-        return regions;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Location getLocation1() {
-        return location1;
-    }
-
-    public Location getLocation2() {
-        return location2;
-    }
-
-    public ArrayList<Location> getBlocks() {
-        return blocks;
-    }
-
-    public OfflinePlayer getCreator() {
-        return creator;
-    }
-
-    public List<OfflinePlayer> getOwners() {
-        return owners;
-    }
-
-    public List<OfflinePlayer> getMembers() {
-        return members;
-    }
-
-    public boolean isPvp() {
-        return pvp;
-    }
-
-    public void setPvp(boolean pvp) {
-        this.pvp = pvp;
-    }
-
-    public boolean isMobSpawning() {
-        return mobSpawning;
-    }
-
-    public void setMobSpawning(boolean mobSpawning) {
-        this.mobSpawning = mobSpawning;
-    }
-
-    public boolean isMobDamage() {
-        return mobDamage;
-    }
-
-    public void setMobDamage(boolean mobDamage) {
-        this.mobDamage = mobDamage;
-    }
-
-    public boolean isUse() {
-        return use;
-    }
-
-    public void setUse(boolean use) {
-        this.use = use;
-    }
-
-    public boolean isBuild() {
-        return build;
-    }
-
-    public void setBuild(boolean build) {
-        this.build = build;
-    }
-
-    public boolean isInvincible() {
-        return invincible;
-    }
-
-    public void setInvincible(boolean invincible) {
-        this.invincible = invincible;
-    }
-
-    public boolean isLeavesFalling() {
-        return leavesFalling;
-    }
-
-    public void setLeavesFalling(boolean leavesFalling) {
-        this.leavesFalling = leavesFalling;
-    }
-
-    public boolean isExplosion() {
-        return explosion;
-    }
-
-    public void setExplosion(boolean explosion) {
-        this.explosion = explosion;
-    }
-
-    public boolean isItemDrop() {
-        return itemDrop;
-    }
-
-    public void setItemDrop(boolean itemDrop) {
-        this.itemDrop = itemDrop;
-    }
-
-    public boolean isEntry() {
-        return entry;
-    }
-
-    public void setEntry(boolean entry) {
-        this.entry = entry;
     }
 }
