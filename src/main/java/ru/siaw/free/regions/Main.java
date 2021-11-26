@@ -3,8 +3,9 @@ package ru.siaw.free.regions;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.siaw.free.regions.command.Commands;
-import ru.siaw.free.regions.listener.FlagListener;
 import ru.siaw.free.regions.listener.PlayerListener;
+import ru.siaw.free.regions.listener.flag.FlagListener;
+import ru.siaw.free.regions.listener.flag.PistonsLimiter;
 import ru.siaw.free.regions.utils.Print;
 import ru.siaw.free.regions.utils.config.DataBase;
 import ru.siaw.free.regions.utils.config.Message;
@@ -25,6 +26,8 @@ public final class Main extends JavaPlugin
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new FlagListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PistonsLimiter(), this);
+
         getCommand("rg").setExecutor(new Commands());
     }
 

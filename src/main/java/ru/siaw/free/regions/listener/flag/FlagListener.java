@@ -1,4 +1,4 @@
-package ru.siaw.free.regions.listener;
+package ru.siaw.free.regions.listener.flag;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -116,7 +116,7 @@ public class FlagListener implements Listener
             if (region != null && !region.isExplosion())
                 toRemove.add(block);
         });
-        toRemove.forEach(block -> e.blockList().remove(block));
+        toRemove.forEach(e.blockList()::remove);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -142,7 +142,7 @@ public class FlagListener implements Listener
                 toRemove.add(block);
             }
         }
-        toRemove.forEach(block -> e.blockList().remove(block));
+        toRemove.forEach(e.blockList()::remove);
     }
 
     @EventHandler
