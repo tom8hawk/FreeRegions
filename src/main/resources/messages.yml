@@ -10,6 +10,7 @@ Messages:
     NotBuild: '&cОшибка, Вы не можете строить в данном регионе!'
     NotMove: '&CОшибка, Вы не можете входить в данный регион!'
     NotDrop: '&cОшибка, Вы не можете выкидывать здесь вещи!'
+    NotPiston: '&cОшибка, Вы не можете толкать блоки здесь'
   HelpPage:
     - '&6FreeRegions &8| &fПомощь:'
     - ' &7База:'
@@ -23,9 +24,9 @@ Messages:
     - '  &6* &fРасширить регион - &6/rg expand [кол-во] [сторона]'
     - ' &7Участники:'
     - '  &6* &fДобавить участника в регион - &6/rg addmember [регион] [ник]'
-    - '  &6* &fДобавить администратора в регион - &6/rg addowner [регион] [ник]'
+    - '  &6* &fДобавить владельца в регион - &6/rg addowner [регион] [ник]'
     - '  &6* &fУдалить участника из региона - &6/rg delmember [регион] [ник]'
-    - '  &6* &fУдалить администратора из региона - &6/rg delowner [регион] [ник]'
+    - '  &6* &fУдалить владельца из региона - &6/rg delowner [регион] [ник]'
     - ' &7Другое:'
     - '  &6* &fУстановить флаг в регионе - &6/rg addflag [регион]'
     - '  &6* &fУдалить флаг в регионе - &6/rg delflag [регион]'
@@ -43,16 +44,6 @@ Messages:
     Successfully: '&6FreeRegions &8| &fВы успешно установили позицию &e%pos'
     NoSelectRegion: '&cFreeRegions &8| &fДля начала выделите регион!'
     NoRight: '&cFreeRegions &8| &fДля начала выделите первую позицию!'
-  Define:
-    Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg define [регион родитель] [имя нового региона]'
-    Successfully: '&6FreeRegions &8| &fВы успешно объединили регион &e%region &fс &e%define &fв &e%size &fблоков'
-    BlocksLimit: '&cFreeRegions &8| &fВы привысили лимит блоков в одном регионе! Ваш лимит: &c%limit'
-    RegionCountLimit: '&cFreeRegions &8| &fВы привысили лимит количества регионов, для создания нового удалите старые!'
-    OtherRegions: '&cFreeRegion &8| &fВы не можете заприватить эту область, так как она пересекается с &c%other'
-    Exists: '&cFreeRegions &8| &fРегион с таким названием уже существует!'
-    AlreadyDefine: '&cFreeRegions &8| &fДанный регион уже объединен с &c%define'
-    NoInteract: '&cFreeRegions &8| &fДанный регион не соприкасается с &c%define'
-    NoExists: '&cFreeRegions &8| &fДанный регион-родитель не существует'
   Create:
     Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg create [регион]'
     Successfully: '&6FreeRegions &8| &fВы успешно создали регион &e%region &fв &e%size &fблоков'
@@ -67,7 +58,8 @@ Messages:
     YouArentOwner: '&cОшибка, Вы не владелец региона!'
   Roles:
     Member: 'Участник'
-    Owner: 'Создатель'
+    Owner: 'Владелец'
+    Creator: 'Создатель'
   AddRole:
     Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg %subcommand [регион] [ник]'
     Successfully: '&6FreeRegions &8| &fВы успешно добававили %player &fв регион &e%region &fпод ролью &e%role'

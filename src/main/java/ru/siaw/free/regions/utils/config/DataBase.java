@@ -43,9 +43,9 @@ public class DataBase extends YAML
                         new Region(splits[1], new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc2.get(2)),
                                 Bukkit.getOfflinePlayer(UUID.fromString(configuration.getString(mainKey + splits[1] + ".creator"))), owners, members,
                                 getBoolean(splits[1] + ".pvp"), getBoolean(splits[1] + ".mob-spawning"), getBoolean(splits[1] + ".mob-damage"),
-                                getBoolean(splits[1] + ".use"), getBoolean(splits[1] + ".build"), getBoolean(splits[1] + ".invincible"),
-                                getBoolean(splits[1] + ".leaves-falling"), getBoolean(splits[1] + ".explosion"), getBoolean(splits[1] + ".item-drop"),
-                                getBoolean(splits[1] + ".entry"));
+                                getBoolean(splits[1] + ".use"), getBoolean(splits[1] + ".piston"), getBoolean(splits[1] + ".build"),
+                                getBoolean(splits[1] + ".invincible"), getBoolean(splits[1] + ".leaves-falling"), getBoolean(splits[1] + ".explosion"),
+                                getBoolean(splits[1] + ".item-drop"), getBoolean(splits[1] + ".entry"));
                     }
                 });
             }
@@ -91,6 +91,7 @@ public class DataBase extends YAML
                     configuration.set(key + "mob-spawning", region.isMobSpawning());
                     configuration.set(key + "mob-damage", region.isMobDamage());
                     configuration.set(key + "use", region.isUse());
+                    configuration.set(key + "piston", region.isPiston());
                     configuration.set(key + "build", region.isBuild());
                     configuration.set(key + "invincible", region.isInvincible());
                     configuration.set(key + "leaves-falling", region.isLeavesFalling());

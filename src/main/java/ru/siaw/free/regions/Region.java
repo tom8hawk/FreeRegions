@@ -21,10 +21,10 @@ public class Region
     @Getter private final ArrayList<Location> blocks = new ArrayList<>();
     @Getter private final OfflinePlayer creator;
     @Getter private List<OfflinePlayer> owners = new ArrayList<>(), members = new ArrayList<>();
-    @Getter @Setter private boolean pvp, mobSpawning, mobDamage, use, build, invincible, leavesFalling, explosion, itemDrop, entry;
+    @Getter @Setter private boolean pvp, mobSpawning, mobDamage, use, piston, build, invincible, leavesFalling, explosion, itemDrop, entry;
 
     public Region(String name, Location location1, Location location2, OfflinePlayer creator, List<OfflinePlayer> owners, List<OfflinePlayer> members, boolean pvp, boolean mobSpawning, boolean mobDamage,
-                  boolean use, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
+                  boolean use, boolean piston, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
         this.name = name;
         this.location1 = location1;
         this.location2 = location2;
@@ -36,6 +36,7 @@ public class Region
         this.mobSpawning = mobSpawning;
         this.mobDamage = mobDamage;
         this.use = use;
+        this.piston = piston;
         this.build = build;
         this.invincible = invincible;
         this.leavesFalling = leavesFalling;
@@ -47,7 +48,7 @@ public class Region
     }
 
     public Region(String name, Location location1, Location location2, Player creator, boolean pvp, boolean mobSpawning, boolean mobDamage,
-                  boolean use, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
+                  boolean use, boolean piston, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
         this.location1 = location1;
         this.location2 = location2;
         this.creator = creator;
@@ -57,6 +58,7 @@ public class Region
         this.mobSpawning = mobSpawning;
         this.mobDamage = mobDamage;
         this.use = use;
+        this.piston = piston;
         this.build = build;
         this.invincible = invincible;
         this.leavesFalling = leavesFalling;
@@ -103,7 +105,8 @@ public class Region
                     for (int z = bottomBlockZ; z <= topBlockZ; z++)
                         for (int y = bottomBlockY; y <= topBlockY; y++)
                             blocks.add(new Location(location1.getWorld(), x, y, z));
-                if (add) regions.add(this);
+                if (add)
+                    regions.add(this);
             }
         });
         countThread.start();

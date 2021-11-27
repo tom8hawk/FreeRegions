@@ -14,7 +14,7 @@ import ru.siaw.free.regions.utils.config.Message;
 
 import java.util.HashMap;
 
-public class PistonsLimiter implements Listener {
+public class PistonListener implements Listener {
     private static final HashMap<Block, Player> placedPistons = new HashMap<>();
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -64,14 +64,14 @@ public class PistonsLimiter implements Listener {
             }
         }
 
-        if (region != null && !region.isBuild()) {
+        if (region != null && !region.isPiston()) {
             if (placedPistons.containsKey(e.getBlock())) {
                 Player player = placedPistons.get(e.getBlock());
 
                 if (region.isInRegion(player))
                     return;
 
-                Print.toPlayer(player, Message.inst.getMessage("Flags.NotBuild"));
+                Print.toPlayer(player, Message.inst.getMessage("Flags.NotUse"));
             }
             e.setCancelled(true);
         }
@@ -106,14 +106,14 @@ public class PistonsLimiter implements Listener {
                 }
             }
 
-        if (region != null && !region.isBuild()) {
+        if (region != null && !region.isPiston()) {
             if (placedPistons.containsKey(e.getBlock())) {
                 Player player = placedPistons.get(e.getBlock());
 
                 if (region.isInRegion(player))
                     return;
 
-                Print.toPlayer(player, Message.inst.getMessage("Flags.NotBuild"));
+                Print.toPlayer(player, Message.inst.getMessage("Flags.NotUse"));
             }
             e.setCancelled(true);
         }
