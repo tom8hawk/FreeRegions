@@ -16,12 +16,12 @@ public final class Message extends YAML
     }
 
     public String getMessage(String path) {
-        String result = configuration.getString(mainKey + path);
+        String result = configuration.getString(path);
         return ChatColor.translateAlternateColorCodes('&', result != null ? result : "");
     }
 
     public List<String> getList(String path) {
-        List<String> output = configuration.getStringList(mainKey + path);
+        List<String> output = configuration.getStringList(path);
         for (int i = 0; i < output.size(); i++) {
             output.set(i, ChatColor.translateAlternateColorCodes('&', output.get(i)));
         }
@@ -32,7 +32,7 @@ public final class Message extends YAML
     public void load() {
         try {
             configuration.load(file);
-        } catch (IOException |org.bukkit.configuration.InvalidConfigurationException e) {
+        } catch (IOException | org.bukkit.configuration.InvalidConfigurationException e) {
             e.printStackTrace();
         }
         Print.toConsole("Список сообщений сохранен.");

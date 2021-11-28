@@ -67,25 +67,30 @@ public class Commands implements CommandExecutor
                     if (validate(sender, false, "info") || validate(sender, true, "info")) {
                         Region region = null;
 
-                        if (isPlayer(sender))
+                        if (args.length == 1 && isPlayer(sender))
                             region = Region.getByLocation(player.getLocation());
 
-                        if (args.length > 1 && validate(sender, false, "infoOther"))
+                        else if (args.length == 2 && validate(sender, false, "infoOther"))
                             region = Region.getByName(args[1]);
 
                         if (region != null) {
-                            Location pos1 = region.getLocation1();
-                            Location pos2 = region.getLocation2();
-
                             Region finalRegion = region;
-                            message.getList("Info.Successfully").forEach(line -> Print.toSender(sender, line.replace("%region", finalRegion.getName())
-                                    .replace("%pos1", String.format("%d, %d, %d", (int) pos1.getX(), (int) pos1.getY(), (int) pos1.getZ()))
-                                    .replace("%pos2", String.format("%d, %d, %d", (int) pos2.getX(), (int) pos2.getY(), (int) pos2.getZ()))
-                                    .replace("%flags", String.format("PVP: %b, Mob spawning: %b, Mob damage %b, Use: %b, Build: %b, Invincible: %b, Leaves falling: %b, Explosion: %b, Entry: %b",
-                                            finalRegion.isPvp(), finalRegion.isMobSpawning(), finalRegion.isMobDamage(), finalRegion.isUse(), finalRegion.isBuild(), finalRegion.isInvincible(), finalRegion.isLeavesFalling(),
-                                            finalRegion.isExplosion(), finalRegion.isEntry()))
-                                    .replace("%owners", Other.playersToString(finalRegion.getOwners())).replace("%members", Other.playersToString(finalRegion.getMembers()))
-                                    .replace("%size", String.valueOf(finalRegion.getBlocks().size()))));
+
+                            new Thread(() -> {
+                                synchronized (finalRegion) {
+                                    Location pos1 = finalRegion.getLocation1();
+                                    Location pos2 = finalRegion.getLocation2();
+
+                                    message.getList("Info.Successfully").forEach(line -> Print.toSender(sender, line.replace("%region", finalRegion.getName())
+                                            .replace("%pos1", String.format("%d, %d, %d", (int) pos1.getX(), (int) pos1.getY(), (int) pos1.getZ()))
+                                            .replace("%pos2", String.format("%d, %d, %d", (int) pos2.getX(), (int) pos2.getY(), (int) pos2.getZ()))
+                                            .replace("%flags", String.format("PVP: %b, Mob spawning: %b, Mob damage %b, Use: %b, Build: %b, Invincible: %b, Leaves falling: %b, Explosion: %b, Entry: %b",
+                                                    finalRegion.isPvp(), finalRegion.isMobSpawning(), finalRegion.isMobDamage(), finalRegion.isUse(), finalRegion.isBuild(), finalRegion.isInvincible(), finalRegion.isLeavesFalling(),
+                                                    finalRegion.isExplosion(), finalRegion.isEntry()))
+                                            .replace("%owners", Other.playersToString(finalRegion.getOwners())).replace("%members", Other.playersToString(finalRegion.getMembers()))
+                                            .replace("%size", String.valueOf(finalRegion.getBlocks().size()))));
+                                }
+                            }).start();
                         }
                         else Print.toSender(sender, message.getMessage("Info.NotExists"));
                     }

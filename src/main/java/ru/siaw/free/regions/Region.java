@@ -2,20 +2,21 @@ package ru.siaw.free.regions;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import ru.siaw.free.regions.utils.PlayerUtil;
 import ru.siaw.free.regions.utils.Print;
+import ru.siaw.free.regions.utils.config.DataBase;
 import ru.siaw.free.regions.utils.config.Message;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Region
 {
-    @Getter private static final List<Region> regions = new LinkedList<>(); // Все регионы
+    @Getter private static final List<Region> regions = new ArrayList<>(); // Все регионы
     @Getter private String name;
     @Getter private final Location location1, location2;
     @Getter private final ArrayList<Location> blocks = new ArrayList<>();
@@ -92,18 +93,18 @@ public class Region
     private void countBlocks(boolean add) {
         countThread = new Thread(() -> {
             synchronized (blocks) {
-                int topBlockX = (Math.max(location1.getBlockX(), location2.getBlockX()));
-                int bottomBlockX = (Math.min(location1.getBlockX(), location2.getBlockX()));
+                int minX = (Math.max(location1.getBlockX(), location2.getBlockX()));
+                int maxX = (Math.min(location1.getBlockX(), location2.getBlockX()));
 
-                int topBlockY = (Math.max(location1.getBlockY(), location2.getBlockY()));
-                int bottomBlockY = (Math.min(location1.getBlockY(), location2.getBlockY()));
+                int minY = (Math.max(location1.getBlockY(), location2.getBlockY()));
+                int maxY = (Math.min(location1.getBlockY(), location2.getBlockY()));
 
-                int topBlockZ = (Math.max(location1.getBlockZ(), location2.getBlockZ()));
-                int bottomBlockZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
+                int minZ = (Math.max(location1.getBlockZ(), location2.getBlockZ()));
+                int maxZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
 
-                for (int x = bottomBlockX; x <= topBlockX; x++)
-                    for (int z = bottomBlockZ; z <= topBlockZ; z++)
-                        for (int y = bottomBlockY; y <= topBlockY; y++)
+                for (int x = minX; x <= maxX; x++)
+                    for (int z = minZ; z <= maxZ; z++)
+                        for (int y = minY; y <= maxY; y++)
                             blocks.add(new Location(location1.getWorld(), x, y, z));
                 if (add)
                     regions.add(this);
@@ -141,7 +142,7 @@ public class Region
                         return;
                     }
 
-                    if (blocks.stream().anyMatch(rg.blocks::contains)) {
+                    if (rg.blocks.stream().anyMatch(blocks::contains)) {
                         Print.toPlayer(creator, Message.inst.getMessage("Create.OtherRegions").replace("%other", rg.getName()));
                         return;
                     }
@@ -160,6 +161,7 @@ public class Region
     }
 
     public void remove() {
+        DataBase.inst.cleanRegionData(name);
         regions.remove(this);
     }
 

@@ -14,7 +14,8 @@ import ru.siaw.free.regions.utils.config.Message;
 
 import java.util.HashMap;
 
-public class PistonListener implements Listener {
+public class PistonListener implements Listener
+{
     private static final HashMap<Block, Player> placedPistons = new HashMap<>();
 
     @EventHandler(priority = EventPriority.MONITOR)

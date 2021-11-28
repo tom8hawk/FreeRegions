@@ -25,28 +25,23 @@ public class DataBase extends YAML
     public void readRegions() {
         readThread = new Thread(() -> {
             synchronized (configuration) {
-                configuration.getKeys(true).forEach(key -> {
-                    String[] splits = key.split("\\.");
+                configuration.getKeys(false).forEach(key -> {
+                    List<OfflinePlayer> owners = new ArrayList<>();
+                    configuration.getStringList(key + ".owners").forEach(uuid -> owners.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid))));
 
-                    if (splits.length == 2) {
-                        List<OfflinePlayer> owners = new ArrayList<>();
-                        configuration.getStringList(mainKey + splits[1] + ".owners").forEach(uuid -> owners.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid))));
+                    List<OfflinePlayer> members = new ArrayList<>();
+                    configuration.getStringList(key + ".members").forEach(uuid -> members.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid))));
 
-                        List<OfflinePlayer> members = new ArrayList<>();
-                        configuration.getStringList(mainKey + splits[1] + ".members").forEach(uuid -> members.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid))));
+                    World world = Bukkit.getWorld(configuration.getString(key + ".world"));
 
-                        World world = Bukkit.getWorld(configuration.getString(mainKey + splits[1] + ".world"));
+                    List<Double> loc1 = configuration.getDoubleList(key + ".location1");
+                    List<Double> loc2 = configuration.getDoubleList(key + ".location2");
 
-                        List<Double> loc1 = configuration.getDoubleList(mainKey + splits[1] + ".location1");
-                        List<Double> loc2 = configuration.getDoubleList(mainKey + splits[1] + ".location2");
-
-                        new Region(splits[1], new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc2.get(2)),
-                                Bukkit.getOfflinePlayer(UUID.fromString(configuration.getString(mainKey + splits[1] + ".creator"))), owners, members,
-                                getBoolean(splits[1] + ".pvp"), getBoolean(splits[1] + ".mob-spawning"), getBoolean(splits[1] + ".mob-damage"),
-                                getBoolean(splits[1] + ".use"), getBoolean(splits[1] + ".piston"), getBoolean(splits[1] + ".build"),
-                                getBoolean(splits[1] + ".invincible"), getBoolean(splits[1] + ".leaves-falling"), getBoolean(splits[1] + ".explosion"),
-                                getBoolean(splits[1] + ".item-drop"), getBoolean(splits[1] + ".entry"));
-                    }
+                    new Region(key, new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc2.get(2)),
+                            Bukkit.getOfflinePlayer(UUID.fromString(configuration.getString(key + ".creator"))), owners, members, getBoolean(key + ".pvp"),
+                            getBoolean(key + ".mob-spawning"), getBoolean(key + ".mob-damage"), getBoolean(key + ".use"), getBoolean(key + ".piston"),
+                            getBoolean(key + ".build"), getBoolean(key + ".invincible"), getBoolean(key + ".leaves-falling"), getBoolean(key + ".explosion"),
+                            getBoolean(key + ".item-drop"), getBoolean(key + ".entry"));
                 });
             }
         });
@@ -57,7 +52,7 @@ public class DataBase extends YAML
         new Thread(() -> {
             synchronized (configuration) {
                 if (region != null) {
-                    String key = mainKey + region.getName() + ".";
+                    String key = region.getName() + ".";
 
                     Location location1 = region.getLocation1();
 
@@ -109,11 +104,43 @@ public class DataBase extends YAML
         }).start();
     }
 
-    private boolean getBoolean(String path) {
-        return configuration.getBoolean(mainKey + path);
+    public void cleanRegionData(String name) {
+        synchronized (configuration) {
+            configuration.set(name, null);
+            String key = name + ".";
+
+            configuration.set(key + "world", null);
+            configuration.set(key + "location1", null);
+            configuration.set(key + "location2", null);
+            configuration.set(key + "creator", null);
+            configuration.set(key + "owners", null);
+            configuration.set(key + "members", null);
+            configuration.set(key + "pvp", null);
+            configuration.set(key + "mob-spawning", null);
+            configuration.set(key + "mob-damage", null);
+            configuration.set(key + "use", null);
+            configuration.set(key + "piston", null);
+            configuration.set(key + "build", null);
+            configuration.set(key + "invincible", null);
+            configuration.set(key + "leaves-falling", null);
+            configuration.set(key + "explosion", null);
+            configuration.set(key + "item-drop", null);
+            configuration.set(key + "entry", null);
+
+            try {
+                configuration.save(file);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public static Thread writeThread;
+    private boolean getBoolean(String path) {
+        return configuration.getBoolean(path);
+    }
+
+    public static Thread scheduledWriteThread;
     public void load() {
         try {
             configuration.load(file);
@@ -135,18 +162,18 @@ public class DataBase extends YAML
             Print.toConsole("Список регионов загружен!");
         }).start();
 
-        if (writeThread == null) {
-            writeThread = new Thread(() -> {
+        if (scheduledWriteThread == null) {
+            scheduledWriteThread = new Thread(() -> {
                 while (true) {
                     try {
-                        Thread.sleep(900000);
+                        Thread.sleep(300000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     Region.getRegions().forEach(DataBase.inst::writeRegion);
                 }
             });
-            writeThread.start();
+            scheduledWriteThread.start();
         }
     }
 }
