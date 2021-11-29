@@ -42,7 +42,7 @@ public class FlagListener implements Listener
             if (damager instanceof Player) {
                 Player pDamager = (Player) damager;
 
-                if (!bypass(pDamager) && !region.isPvp() && !region.isInRegion(pDamager)) {
+                if (!bypass(pDamager) && !region.isPvp() && !region.isPlayerInRegion(pDamager)) {
                     e.setCancelled(true);
                     e.getDamager().sendMessage(Message.inst.getMessage("Flags.NotPvP"));
                 }
@@ -58,7 +58,7 @@ public class FlagListener implements Listener
         if (region != null) {
             Player builder = e.getPlayer();
 
-            if (!bypass(builder) && !region.isBuild() && !region.isInRegion(builder)) {
+            if (!bypass(builder) && !region.isBuild() && !region.isPlayerInRegion(builder)) {
                 e.setCancelled(true);
                 Print.toPlayer(builder, Message.inst.getMessage("Flags.NotBuild"));
             }
@@ -72,7 +72,7 @@ public class FlagListener implements Listener
         if (region != null) {
             Player builder = e.getPlayer();
 
-            if (!bypass(builder) && !region.isBuild() && !region.isInRegion(builder)) {
+            if (!bypass(builder) && !region.isBuild() && !region.isPlayerInRegion(builder)) {
                 e.setCancelled(true);
                 Print.toPlayer(builder, Message.inst.getMessage("Flags.NotBuild"));
             }
@@ -86,7 +86,7 @@ public class FlagListener implements Listener
         if (region != null) {
             Player player = e.getPlayer();
 
-            if (!bypass(player) && !region.isEntry() && !region.isInRegion(player)) {
+            if (!bypass(player) && !region.isEntry() && !region.isPlayerInRegion(player)) {
                 e.setCancelled(true);
                 e.getPlayer().sendMessage(Message.inst.getMessage("Flags.NotMove"));
             }
@@ -102,7 +102,7 @@ public class FlagListener implements Listener
         Region region = Region.getByLocation(player.getLocation());
 
         if (region != null) {
-            if (e.getCause() == EntityDamageEvent.DamageCause.FALL && !bypass(player) && !region.isInRegion(player) && !region.isInvincible())
+            if (e.getCause() == EntityDamageEvent.DamageCause.FALL && !bypass(player) && !region.isPlayerInRegion(player) && !region.isInvincible())
                 e.setCancelled(true);
         }
     }
@@ -134,7 +134,7 @@ public class FlagListener implements Listener
                     if (source != null && source.isValid() && source instanceof Player) {
                         Player player = (Player) source;
 
-                        if (region.isInRegion(player) || bypass(player)) continue;
+                        if (region.isPlayerInRegion(player) || bypass(player)) continue;
 
                         player.sendMessage(Message.inst.getMessage("Flags.NotBuild"));
                     }
@@ -150,7 +150,7 @@ public class FlagListener implements Listener
         Region region = Region.getByLocation(e.getItemDrop().getLocation());
         Player ejector = e.getPlayer();
 
-        if (region != null && !region.isItemDrop() && !region.isInRegion(ejector) && !bypass(ejector)) {
+        if (region != null && !region.isItemDrop() && !region.isPlayerInRegion(ejector) && !bypass(ejector)) {
             e.setCancelled(true);
             e.getPlayer().sendMessage(Message.inst.getMessage("Flags.NotDrop"));
         }
@@ -164,7 +164,7 @@ public class FlagListener implements Listener
         Region region = Region.getByLocation(e.getClickedBlock().getLocation());
         Player player = e.getPlayer();
 
-        if (region != null && !region.isInRegion(player) && !bypass(player) && !region.isUse()) {
+        if (region != null && !region.isPlayerInRegion(player) && !bypass(player) && !region.isUse()) {
             e.setCancelled(true);
             e.getPlayer().sendMessage(Message.inst.getMessage("Flags.NotUse"));
         }

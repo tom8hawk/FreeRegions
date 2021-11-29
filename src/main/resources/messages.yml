@@ -42,6 +42,7 @@ Expand:
 Positions:
   Successfully: '&6FreeRegions &8| &fВы успешно установили позицию &e%pos'
   NoSelectRegion: '&cFreeRegions &8| &fДля начала выделите регион!'
+  DifferentWorlds: '&cFreeRegions &8| &fМиры первой точки и второй отличаются!'
   NoRight: '&cFreeRegions &8| &fДля начала выделите первую позицию!'
 Create:
   Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg create [регион]'

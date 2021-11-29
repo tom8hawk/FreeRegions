@@ -88,7 +88,7 @@ public class Commands implements CommandExecutor
                                                     finalRegion.isPvp(), finalRegion.isMobSpawning(), finalRegion.isMobDamage(), finalRegion.isUse(), finalRegion.isBuild(), finalRegion.isInvincible(), finalRegion.isLeavesFalling(),
                                                     finalRegion.isExplosion(), finalRegion.isEntry()))
                                             .replace("%owners", Other.playersToString(finalRegion.getOwners())).replace("%members", Other.playersToString(finalRegion.getMembers()))
-                                            .replace("%size", String.valueOf(finalRegion.getBlocks().size()))));
+                                            .replace("%size", String.valueOf(finalRegion.getNumOfBlocks()))));
                                 }
                             }).start();
                         }

@@ -69,7 +69,7 @@ public class PistonListener implements Listener
             if (placedPistons.containsKey(e.getBlock())) {
                 Player player = placedPistons.get(e.getBlock());
 
-                if (region.isInRegion(player))
+                if (region.isPlayerInRegion(player))
                     return;
 
                 Print.toPlayer(player, Message.inst.getMessage("Flags.NotUse"));
@@ -111,7 +111,7 @@ public class PistonListener implements Listener
             if (placedPistons.containsKey(e.getBlock())) {
                 Player player = placedPistons.get(e.getBlock());
 
-                if (region.isInRegion(player))
+                if (region.isPlayerInRegion(player))
                     return;
 
                 Print.toPlayer(player, Message.inst.getMessage("Flags.NotUse"));

@@ -2,7 +2,6 @@ package ru.siaw.free.regions;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -19,7 +18,7 @@ public class Region
     @Getter private static final List<Region> regions = new ArrayList<>(); // Все регионы
     @Getter private String name;
     @Getter private final Location location1, location2;
-    @Getter private final ArrayList<Location> blocks = new ArrayList<>();
+    @Getter private int numOfBlocks = 0;
     @Getter private final OfflinePlayer creator;
     @Getter private List<OfflinePlayer> owners = new ArrayList<>(), members = new ArrayList<>();
     @Getter @Setter private boolean pvp, mobSpawning, mobDamage, use, piston, build, invincible, leavesFalling, explosion, itemDrop, entry;
@@ -70,7 +69,7 @@ public class Region
         validate(name);
     }
 
-    public static Region getByName(String name) { // Для комманд с названием региона
+    public static Region getByName(String name) {
         for (Region region : regions)
             if (region.getName().equalsIgnoreCase(name))
                 return region;
@@ -79,57 +78,72 @@ public class Region
 
     public static Region getByLocation(Location location) {
         for (Region region : regions)
-            for (Location loc : region.getBlocks())
-                if (location.equals(loc))
-                    return region;
+            if (region.isLocInRegion(location))
+                return region;
         return null;
     }
 
-    public boolean isInRegion(Player player) {
+    public boolean isPlayerInRegion(Player player) {
         return owners.contains(player) || members.contains(player);
     }
 
-    private Thread countThread;
-    private void countBlocks(boolean add) {
-        countThread = new Thread(() -> {
-            synchronized (blocks) {
-                int minX = (Math.max(location1.getBlockX(), location2.getBlockX()));
-                int maxX = (Math.min(location1.getBlockX(), location2.getBlockX()));
+    public boolean isLocInRegion(Location loc) {
+        int maxX = (Math.max(location1.getBlockX(), location2.getBlockX()));
+        int minX = (Math.min(location1.getBlockX(), location2.getBlockX()));
 
-                int minY = (Math.max(location1.getBlockY(), location2.getBlockY()));
-                int maxY = (Math.min(location1.getBlockY(), location2.getBlockY()));
+        int maxY = (Math.max(location1.getBlockY(), location2.getBlockY()));
+        int minY = (Math.min(location1.getBlockY(), location2.getBlockY()));
 
-                int minZ = (Math.max(location1.getBlockZ(), location2.getBlockZ()));
-                int maxZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
+        int maxZ = (Math.max(location1.getBlockZ(), location2.getBlockZ()));
+        int minZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
+
+        return loc.getX() >= minX && loc.getX() <= maxX && loc.getY() >= minY && loc.getY() <= maxY && loc.getZ() >= minZ && loc.getZ() <= maxZ;
+    }
+
+    public Thread countBlocks;
+    private void countBlocks(Boolean add) {
+        countBlocks = new Thread(() -> {
+            synchronized (add) {
+                int minX = (Math.min(location1.getBlockX(), location2.getBlockX()));
+                int maxX = (Math.max(location1.getBlockX(), location2.getBlockX()));
+
+                int minY = (Math.min(location1.getBlockY(), location2.getBlockY()));
+                int maxY = (Math.max(location1.getBlockY(), location2.getBlockY()));
+
+                int minZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
+                int maxZ = (Math.max(location1.getBlockZ(), location2.getBlockZ()));
 
                 for (int x = minX; x <= maxX; x++)
                     for (int z = minZ; z <= maxZ; z++)
                         for (int y = minY; y <= maxY; y++)
-                            blocks.add(new Location(location1.getWorld(), x, y, z));
-                if (add)
-                    regions.add(this);
+                            numOfBlocks++;
             }
         });
-        countThread.start();
+        countBlocks.start();
+        if (add) regions.add(this);
     }
 
     private void validate(String name) {
         new Thread(() -> {
             synchronized (regions) {
-                countBlocks(false);
                 Player creator = (Player) this.creator;
-                PlayerUtil util = new PlayerUtil(creator);
 
-                try {
-                    countThread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if (!location1.getWorld().equals(location2.getWorld())) {
+                    Print.toPlayer(creator, Message.inst.getMessage("Positions.DifferentWorlds"));
                 }
 
+                PlayerUtil util = new PlayerUtil(creator);
                 int limitOfBlocks = util.getLimitOfBlocks();
-                if (blocks.size() > limitOfBlocks) {
-                    creator.sendMessage(Message.inst.getMessage("Create.BlocksLimit").replace("%limit", String.valueOf(limitOfBlocks)));
-                    return;
+
+                countBlocks(false);
+                try {
+                    countBlocks.join();
+                    if (numOfBlocks > limitOfBlocks) {
+                        Print.toPlayer(creator, Message.inst.getMessage("Create.BlocksLimit"));
+                        return;
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
                 int regionsCount = 0;
@@ -142,7 +156,7 @@ public class Region
                         return;
                     }
 
-                    if (rg.blocks.stream().anyMatch(blocks::contains)) {
+                    if (rg.isLocInRegion(location1) || rg.isLocInRegion(location2)) {
                         Print.toPlayer(creator, Message.inst.getMessage("Create.OtherRegions").replace("%other", rg.getName()));
                         return;
                     }
@@ -155,7 +169,7 @@ public class Region
 
                 this.name = name;
                 regions.add(this);
-                Print.toPlayer(creator, Message.inst.getMessage("Create.Successfully").replace("%region", name).replace("%size", String.valueOf(blocks.size())));
+                Print.toPlayer(creator, Message.inst.getMessage("Create.Successfully").replace("%region", name).replace("%size", String.valueOf(numOfBlocks)));
             }
         }).start();
     }
