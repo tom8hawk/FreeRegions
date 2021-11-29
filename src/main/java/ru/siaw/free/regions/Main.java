@@ -28,6 +28,7 @@ public final class Main extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new FlagListener(), this);
         Bukkit.getPluginManager().registerEvents(new PistonListener(), this);
+        PistonListener.scheduling();
         Bukkit.getPluginManager().registerEvents(new BurnListener(), this);
 
         getCommand("rg").setExecutor(new Commands());

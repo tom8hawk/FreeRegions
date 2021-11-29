@@ -12,11 +12,35 @@ import ru.siaw.free.regions.Region;
 import ru.siaw.free.regions.utils.Print;
 import ru.siaw.free.regions.utils.config.Message;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class PistonListener implements Listener
 {
     private static final HashMap<Block, Player> placedPistons = new HashMap<>();
+
+    public static void scheduling() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(300000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                List<Block> toRemove = new ArrayList<>();
+
+                placedPistons.forEach((block, p) -> {
+                    Block nowBlock = block.getLocation().getWorld().getBlockAt(block.getLocation());
+
+                    if (nowBlock.getType() != Material.PISTON_BASE && nowBlock.getType() != Material.PISTON_STICKY_BASE)
+                        toRemove.add(block);
+                });
+                toRemove.forEach(placedPistons::remove);
+            }
+        }).start();
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlacePiston(BlockPlaceEvent e) {
