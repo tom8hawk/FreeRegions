@@ -32,7 +32,7 @@ public class PistonListener implements Listener
                 List<Block> toRemove = new ArrayList<>();
 
                 placedPistons.forEach((block, p) -> {
-                    Block nowBlock = block.getLocation().getWorld().getBlockAt(block.getLocation());
+                    Block nowBlock = block.getWorld().getBlockAt(block.getLocation());
 
                     if (nowBlock.getType() != Material.PISTON_BASE && nowBlock.getType() != Material.PISTON_STICKY_BASE)
                         toRemove.add(block);

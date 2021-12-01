@@ -41,8 +41,8 @@ public class DataBase extends YAML
                         new Region(key, new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc2.get(2)),
                                 Bukkit.getOfflinePlayer(UUID.fromString(configuration.getString(key + ".creator"))), owners, members, getBoolean(key + ".pvp"),
                                 getBoolean(key + ".mob-spawning"), getBoolean(key + ".mob-damage"), getBoolean(key + ".use"), getBoolean(key + ".piston"),
-                                getBoolean(key + ".build"), getBoolean(key + ".invincible"), getBoolean(key + ".leaves-falling"), getBoolean(key + ".explosion"),
-                                getBoolean(key + ".item-drop"), getBoolean(key + ".entry")).countBlocks.join();
+                                getBoolean(key + ".build"), getBoolean(key + ".fire"), getBoolean(key + ".invincible"), getBoolean(key + ".leaves-falling"),
+                                getBoolean(key + ".explosion"), getBoolean(key + ".item-drop"), getBoolean(key + ".entry")).countBlocks.join();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

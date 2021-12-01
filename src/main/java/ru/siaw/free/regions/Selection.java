@@ -31,7 +31,7 @@ public class Selection
                             return;
                         }
 
-                        new Region(name, pos1, pos2, player, false, true, false, false, false, false, false, true, false, false, true);
+                        new Region(name, pos1, pos2, player, false, true, false, false, false, false, false, false, true, false, false, true);
                         toRemove[0] = player;
                     }
                 });

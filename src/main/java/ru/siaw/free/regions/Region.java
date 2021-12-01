@@ -21,10 +21,10 @@ public class Region
     @Getter private int numOfBlocks = 0;
     @Getter private final OfflinePlayer creator;
     @Getter private List<OfflinePlayer> owners = new ArrayList<>(), members = new ArrayList<>();
-    @Getter @Setter private boolean pvp, mobSpawning, mobDamage, use, piston, build, invincible, leavesFalling, explosion, itemDrop, entry;
+    @Getter @Setter private boolean pvp, mobSpawning, mobDamage, use, piston, build, fire, invincible, leavesFalling, explosion, itemDrop, entry;
 
     public Region(String name, Location location1, Location location2, OfflinePlayer creator, List<OfflinePlayer> owners, List<OfflinePlayer> members, boolean pvp, boolean mobSpawning, boolean mobDamage,
-                  boolean use, boolean piston, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
+                  boolean use, boolean piston, boolean build, boolean fire, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
         this.name = name;
         this.location1 = location1;
         this.location2 = location2;
@@ -48,7 +48,7 @@ public class Region
     }
 
     public Region(String name, Location location1, Location location2, Player creator, boolean pvp, boolean mobSpawning, boolean mobDamage,
-                  boolean use, boolean piston, boolean build, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
+                  boolean use, boolean piston, boolean build, boolean fire, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
         this.location1 = location1;
         this.location2 = location2;
         this.creator = creator;
