@@ -8,10 +8,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -53,6 +50,20 @@ public class FlagListener implements Listener
 
     @EventHandler
     public void onPlace(BlockPlaceEvent e) {
+        Region region = Region.getByLocation(e.getBlockPlaced().getLocation());
+
+        if (region != null) {
+            Player builder = e.getPlayer();
+
+            if (!bypass(builder) && !region.isBuild() && !region.isPlayerInRegion(builder)) {
+                e.setCancelled(true);
+                Print.toPlayer(builder, Message.inst.getMessage("Flags.NotBuild"));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onMultiPlace(BlockMultiPlaceEvent e) {
         Region region = Region.getByLocation(e.getBlockPlaced().getLocation());
 
         if (region != null) {

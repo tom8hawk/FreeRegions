@@ -29,7 +29,7 @@ public class PlayerListener implements Listener
         Selection.remove(e.getPlayer());
     }
 
-    List<Player> timer = new ArrayList<>();
+    private static final List<Player> timer = new ArrayList<>();
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
@@ -61,7 +61,7 @@ public class PlayerListener implements Listener
                 selection.setPos2(location, p);
 
             timer.add(p);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> timer.remove(p), 2L);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> timer.remove(p), 5L);
         }
     }
 }

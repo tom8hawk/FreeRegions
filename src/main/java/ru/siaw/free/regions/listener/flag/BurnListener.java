@@ -28,12 +28,10 @@ public class BurnListener implements Listener
                 if (region != null && !region.isFire() && !region.isPlayerInRegion(player)) {
                     e.setCancelled(true);
                     Print.toPlayer(player, Message.inst.getMessage("Flags.NotFire"));
-                } else {
-                    put(player, e.getBlock());
                 }
+                put(player, e.getBlock());
+                Print.toConsole(fireToRemove.toString());
             }
-        } else if (e.getPlayer() != null) {
-            put(e.getPlayer(), e.getBlock());
         }
     }
 
