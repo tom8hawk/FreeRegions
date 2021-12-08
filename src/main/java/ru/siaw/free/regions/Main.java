@@ -1,21 +1,23 @@
 package ru.siaw.free.regions;
 
+import fr.minuskube.inv.InventoryManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.siaw.free.regions.command.Commands;
+import ru.siaw.free.regions.config.DataBase;
+import ru.siaw.free.regions.config.Message;
+import ru.siaw.free.regions.listener.BurnListener;
+import ru.siaw.free.regions.listener.FlagListener;
+import ru.siaw.free.regions.listener.PistonListener;
 import ru.siaw.free.regions.listener.PlayerListener;
-import ru.siaw.free.regions.listener.flag.BurnListener;
-import ru.siaw.free.regions.listener.flag.FlagListener;
-import ru.siaw.free.regions.listener.flag.PistonListener;
 import ru.siaw.free.regions.utils.Print;
-import ru.siaw.free.regions.utils.config.DataBase;
-import ru.siaw.free.regions.utils.config.Message;
 
 import java.io.File;
 
-public final class Main extends JavaPlugin
+public class Main extends JavaPlugin
 {
     public static Main inst;
+    public static InventoryManager inventoryManager;
 
     public Main() {
         inst = this;
@@ -30,8 +32,6 @@ public final class Main extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(new PistonListener(), this);
         PistonListener.scheduling();
         Bukkit.getPluginManager().registerEvents(new BurnListener(), this);
-
-        getCommand("rg").setExecutor(new Commands());
     }
 
     public void enable() {
@@ -41,14 +41,14 @@ public final class Main extends JavaPlugin
             dataFolder.mkdir();
         new Message();
         new DataBase();
+        getCommand("rg").setExecutor(new Commands());
+        inventoryManager = new InventoryManager(this);
+        inventoryManager.init();
     }
 
     @Override
     public void onDisable() {
         Region.getRegions().forEach(DataBase.inst::writeRegion);
-
-        Bukkit.getOnlinePlayers().forEach(Selection::remove);
-
         Print.toConsole("До новых встреч! :0");
     }
 }

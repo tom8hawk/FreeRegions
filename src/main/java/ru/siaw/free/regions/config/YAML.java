@@ -1,4 +1,4 @@
-package ru.siaw.free.regions.utils.config;
+package ru.siaw.free.regions.config;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import ru.siaw.free.regions.Main;

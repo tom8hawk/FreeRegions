@@ -3,18 +3,17 @@ package ru.siaw.free.regions;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.PlayerUtil;
 import ru.siaw.free.regions.utils.Print;
-import ru.siaw.free.regions.utils.config.Message;
 
 import java.util.HashMap;
 
 public class Selection
 {
-    private static final HashMap<Player, Selection> selections = new HashMap<>();
+    @Getter private static final HashMap<Player, Selection> selections = new HashMap<>();
 
-    @Getter
-    private Location pos1, pos2;
+    @Getter private Location pos1, pos2;
 
     public Selection(Player player) {
         selections.put(player, this);
@@ -43,10 +42,6 @@ public class Selection
     public static Selection get(Player player) {
         Selection selection = selections.get(player);
         return selection == null ? new Selection(player) : selection;
-    }
-
-    public static void remove(Player player) {
-        selections.remove(player);
     }
 
     // Геттеры, сеттеры

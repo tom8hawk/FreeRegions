@@ -20,6 +20,8 @@ permissions:
     default: op
   freerg.removeAny:
     default: op
+  freerg.changeOtherFlags:
+    default: op
   freerg.delowner:
     default: op
   freerg.delOtherOwner:

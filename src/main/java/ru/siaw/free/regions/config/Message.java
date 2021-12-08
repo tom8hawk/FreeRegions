@@ -1,4 +1,4 @@
-package ru.siaw.free.regions.utils.config;
+package ru.siaw.free.regions.config;
 
 import org.bukkit.ChatColor;
 import ru.siaw.free.regions.utils.Print;

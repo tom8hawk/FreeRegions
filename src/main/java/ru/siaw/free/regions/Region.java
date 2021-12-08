@@ -5,10 +5,10 @@ import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import ru.siaw.free.regions.config.DataBase;
+import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.PlayerUtil;
 import ru.siaw.free.regions.utils.Print;
-import ru.siaw.free.regions.utils.config.DataBase;
-import ru.siaw.free.regions.utils.config.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +38,7 @@ public class Region
         this.use = use;
         this.piston = piston;
         this.build = build;
+        this.fire = fire;
         this.invincible = invincible;
         this.leavesFalling = leavesFalling;
         this.explosion = explosion;
@@ -60,6 +61,7 @@ public class Region
         this.use = use;
         this.piston = piston;
         this.build = build;
+        this.fire = fire;
         this.invincible = invincible;
         this.leavesFalling = leavesFalling;
         this.explosion = explosion;

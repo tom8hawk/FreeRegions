@@ -1,4 +1,4 @@
-package ru.siaw.free.regions.listener.flag;
+package ru.siaw.free.regions.listener;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -9,8 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import ru.siaw.free.regions.Region;
+import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.Print;
-import ru.siaw.free.regions.utils.config.Message;
 
 import java.util.ArrayList;
 import java.util.HashMap;

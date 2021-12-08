@@ -8,12 +8,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import ru.siaw.free.regions.Gui.Gui;
 import ru.siaw.free.regions.Main;
 import ru.siaw.free.regions.Region;
 import ru.siaw.free.regions.Selection;
+import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.Other;
 import ru.siaw.free.regions.utils.Print;
-import ru.siaw.free.regions.utils.config.Message;
 
 public class Commands implements CommandExecutor
 {
@@ -39,13 +40,10 @@ public class Commands implements CommandExecutor
                         Selection.get(player).setPos2(player.getLocation(), player);
                     return false;
                 case "create":
-                    if (validate(sender, true, "create")) {
-                        if (args.length > 1) {
+                    if (validate(sender, true, "create"))
+                        if (args.length > 1)
                             Selection.get(player).create(args[1]);
-                        }
-                        else
-                            Print.toSender(sender, message.getMessage("Create.Usage"));
-                    }
+                        else Print.toSender(sender, message.getMessage("Create.Usage"));
                     return false;
                 case "remove":
                     if (validate(sender, false, "remove")) {
@@ -94,6 +92,18 @@ public class Commands implements CommandExecutor
                         }
                         else Print.toSender(sender, message.getMessage("Info.NotExists"));
                     }
+                    return false;
+                case "flag":
+                case "delflag":
+                case "addflag":
+                    if (args.length > 1) {
+                        Region region = Region.getByName(args[1]);
+                        if (region != null) {
+                            if (region.isPlayerInRegion(player) || validate(sender, true, "freerg.changeOtherFlags")) {
+                                Gui.flags(player, region);
+                            } else Print.toSender(sender, message.getMessage("NotYourRegion"));
+                        } else Print.toSender(sender, message.getMessage("ChangeFlag.NotExists"));
+                    } else Print.toSender(sender, message.getMessage("ChangeFlag.Usage"));
                     return false;
                 case "delowner":
                     if (validate(sender, false, "delowner")) {

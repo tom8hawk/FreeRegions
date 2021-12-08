@@ -5,7 +5,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,10 +16,17 @@ public class Other
 
         meta.setDisplayName(lore[0]);
 
-        List<String> loreList = new ArrayList<>(Arrays.asList(lore).subList(1, lore.length));
+        meta.setLore(Arrays.asList(lore).subList(1, lore.length));
+        stack.setItemMeta(meta);
+        return stack;
+    }
 
-        meta.setLore(loreList);
+    public static ItemStack createItemStackWithList(Material material, String name, List<String> lore) {
+        ItemStack stack = new ItemStack(material);
+        ItemMeta meta = stack.getItemMeta();
 
+        meta.setDisplayName(name);
+        meta.setLore(lore);
         stack.setItemMeta(meta);
         return stack;
     }

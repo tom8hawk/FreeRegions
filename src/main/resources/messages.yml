@@ -65,7 +65,7 @@ AddRole:
   Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg %subcommand [регион] [ник]'
   Successfully: '&6FreeRegions &8| &fВы успешно добававили %player &fв регион &e%region &fпод ролью &e%role'
   AlreadyInRegion: '&cFreeRegions &8| &fДанный игрок уже состоит в привате!'
-  NoExists: '&cFreeRegions &8| &fДанного региона не существует!'
+  NotExists: '&cFreeRegions &8| &fДанного региона не существует!'
   NoPermissions: '&cВы не можете добавлять игроков в приват!'
 RemoveRole:
   Yourself: '&cFreeRegions &8| &fВы не можете удалить из региона сами себя!'
@@ -76,20 +76,10 @@ RemoveRole:
   Single: '&cFreeRegions &8| &fВ привате не может быть меньше одного владельца!'
   NotExists: '&cFreeRegions &8| &fДанного региона не существует!'
   NoPermissions: '&cВы не можете удалять игроков из привата!'
-AddFlag:
-  Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg addflag [регион]'
-  NoExists: '&cFreeRegions &8| &fДанного региона не существует!'
+ChangeFlag:
+  Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg [addflag/removeflag/flag] [регион]'
+  NotExists: '&cFreeRegions &8| &fДанного региона не существует!'
   Successfully: '&6FreeRegions &8| &fВы успешно добавили флаг &e%flag &fв регион &3%region'
-RemoveFlag:
-  Usage: '&6FreeRegions &8| &fИспользуйте - &6/rg removeflag [регион]'
-  NoExists: '&cFreeRegions &8| &fДанного региона не существует!'
-  Successfully: '&6FreeRegions &8| &fВы успешно удалили флаг &e%flag &fиз региона &3%region'
-Select:
-  Successfully: '&6FreeRegions &8| &fВы успешно выделили регион &e%region'
-  YourInNotRegion: '&cОшибка, Вы не стоите в регионе!'
-Unselect:
-  Successfully: '&6FreeRegions &8| &fВы успешно убрали выделение'
-  NotSelected: '&cОшибка, у Вас нет выделенных регионов!'
 Info:
   NotExists: '&cFreeRegions &8| &fДанного региона не существует или вы в нём не стоите!'
   Successfully:
@@ -138,42 +128,15 @@ Guis:
         - ' &7имея право &c* &7или &cfreerg.*'
         - ''
         - '&a[>] Нажмите, чтобы показать список всех регионов!'
-  Addflag:
-    Title: 'Добавление флагов | %region'
-    Nope: '&cВсе флаги были уже установлены в данный регион :('
-    Available:
-      DisplayName: '&fФлаг: &a%flag'
-      Lores:
-        - ''
-        - '&a[>] Нажмите, чтобы добавить флаг!'
-    NotAvailable:
-      DisplayName: '&fФлаг: &6%flag'
-      Lores:
-        - ''
-        - '&6[-] Данный флаг уже установлен!'
-    NoPermission:
-      DisplayName: '&fФлаг: &c%flag'
-      Lores:
-        - ''
-        - '&c[x] Нет права - %permission'
-  Removeflag:
-    Title: 'Удаление флагов | %region'
-    Nope: '&cВ регионе нет установленных флагов :('
-    Available:
-      DisplayName: '&fФлаг: &a%flag'
-      Lores:
-        - ''
-        - '&a[>] Нажмите, чтобы удалить флаг!'
-    NotAvailable:
-      DisplayName: '&fФлаг: &c%flag'
-      Lores:
-        - ''
-        - '&c[x] Данный флаг не установлен!'
-    NoPermission:
-      DisplayName: '&fФлаг: &c%flag'
-      Lores:
-        - ''
-        - '&c[x] Нет права - %permission'
+  ChangeFlag:
+    Title: 'Изменение флагов | %region'
+    DisplayName: '&fФлаг: &a%flag'
+    Add:
+      - ''
+      - '&a[>] Нажмите, чтобы включить флаг! (запретить другим игрокам делать это)'
+    Remove:
+      - ''
+      - '&6[-] Нажмите, чтобы выключить флаг! (разрешить всем игрокам делать это)'
   AllRegions:
     Title: 'Список всех регионов | %page'
     DisplayName: '&fРегион: &a%region'

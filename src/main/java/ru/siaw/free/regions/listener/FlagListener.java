@@ -1,4 +1,4 @@
-package ru.siaw.free.regions.listener.flag;
+package ru.siaw.free.regions.listener;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -17,8 +17,8 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import ru.siaw.free.regions.Region;
+import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.Print;
-import ru.siaw.free.regions.utils.config.Message;
 
 import java.util.ArrayList;
 import java.util.List;
