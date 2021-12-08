@@ -18,9 +18,11 @@ permissions:
     default: op
   freerg.remove:
     default: op
-  freerg.removeAny:
+  freerg.removeOther:
     default: op
   freerg.changeOtherFlags:
+    default: op
+  freerg.invincible:
     default: op
   freerg.delowner:
     default: op

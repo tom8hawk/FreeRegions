@@ -50,7 +50,7 @@ public class Commands implements CommandExecutor
                         if (args.length > 1) {
                             Region region = Region.getByName(args[1]);
                             if (region != null) {
-                                if (region.getOwners().contains(player) || validate(sender, false, "removeAny")) {
+                                if (region.getOwners().contains(player) || validate(sender, false, "removeOther")) {
                                     region.remove();
                                     Print.toSender(sender, message.getMessage("Remove.Successfully").replace("%region", region.getName()));
                                 }
