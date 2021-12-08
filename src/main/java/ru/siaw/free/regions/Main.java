@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import ru.siaw.free.regions.command.Commands;
 import ru.siaw.free.regions.config.DataBase;
 import ru.siaw.free.regions.config.Message;
-import ru.siaw.free.regions.listener.BurnListener;
+import ru.siaw.free.regions.listener.DispenseListener;
 import ru.siaw.free.regions.listener.FlagListener;
 import ru.siaw.free.regions.listener.PistonListener;
 import ru.siaw.free.regions.listener.PlayerListener;
@@ -30,8 +30,9 @@ public class Main extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new FlagListener(), this);
         Bukkit.getPluginManager().registerEvents(new PistonListener(), this);
+        Bukkit.getPluginManager().registerEvents(new DispenseListener(), this);
         PistonListener.scheduling();
-        Bukkit.getPluginManager().registerEvents(new BurnListener(), this);
+        DispenseListener.scheduling();
     }
 
     public void enable() {

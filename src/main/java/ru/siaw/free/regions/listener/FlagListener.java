@@ -190,6 +190,16 @@ public class FlagListener implements Listener
     }
 
     @EventHandler
+    public void onBlockIgnite(BlockIgniteEvent e) {
+        Region region = Region.getByLocation(e.getBlock().getLocation());
+
+        if (region != null && !region.isFire() && e.getPlayer() != null && !region.isPlayerInRegion(e.getPlayer())) {
+            e.setCancelled(true);
+            Print.toPlayer(e.getPlayer(), Message.inst.getMessage("Flags.NotFire"));
+        }
+    }
+
+    @EventHandler
     public void onLeavesDecay(LeavesDecayEvent e) {
         Region region = Region.getByLocation(e.getBlock().getLocation());
 
