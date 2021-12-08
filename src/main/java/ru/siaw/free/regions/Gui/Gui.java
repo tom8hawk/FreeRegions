@@ -24,7 +24,7 @@ public class Gui
                     inventories.remove((Player) e.getPlayer());
                     FlagsProvider.getRegions().remove((Player) e.getPlayer());
                 }))
-                .size(2, 9)
+                .size(4, 9)
                 .title(Message.inst.getMessage("Guis.ChangeFlag.Title").replace("%region", rg.getName()))
                 .build();
         inventories.put(p, inventory);
