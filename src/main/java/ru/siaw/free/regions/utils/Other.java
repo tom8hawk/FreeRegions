@@ -1,9 +1,11 @@
 package ru.siaw.free.regions.utils;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import ru.siaw.free.regions.Region;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,5 +40,19 @@ public class Other
             list.forEach(p -> builder.append(", ").append(p.getName()));
         }
         return builder.toString();
+    }
+    
+    public static String replaceRegionInfo(String line, Region region) {
+        Location pos1 = region.getLocation1();
+        Location pos2 = region.getLocation2();
+        
+        return line.replace("%region", region.getName())
+                .replace("%pos1", String.format("%d, %d, %d", (int) pos1.getX(), (int) pos1.getY(), (int) pos1.getZ()))
+                .replace("%pos2", String.format("%d, %d, %d", (int) pos2.getX(), (int) pos2.getY(), (int) pos2.getZ()))
+                .replace("%flags", String.format("PVP: %b, Mob spawning: %b, Mob damage %b, Use: %b, Build: %b, Invincible: %b, Leaves falling: %b, Explosion: %b, Entry: %b",
+                        region.isPvp(), region.isMobSpawning(), region.isMobDamage(), region.isUse(), region.isBuild(), region.isInvincible(), region.isLeavesFalling(),
+                        region.isExplosion(), region.isEntry()))
+                .replace("%owners", Other.playersToString(region.getOwners())).replace("%members", Other.playersToString(region.getMembers()))
+                .replace("%size", String.valueOf(region.getNumOfBlocks()));
     }
 }

@@ -1,6 +1,5 @@
 package ru.siaw.free.regions.command;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -74,17 +73,7 @@ public class Commands implements CommandExecutor
                         if (region != null) {
                             Region finalRegion = region;
 
-                            Location pos1 = finalRegion.getLocation1();
-                            Location pos2 = finalRegion.getLocation2();
-
-                            message.getList("Info.Successfully").forEach(line -> Print.toSender(sender, line.replace("%region", finalRegion.getName())
-                                    .replace("%pos1", String.format("%d, %d, %d", (int) pos1.getX(), (int) pos1.getY(), (int) pos1.getZ()))
-                                    .replace("%pos2", String.format("%d, %d, %d", (int) pos2.getX(), (int) pos2.getY(), (int) pos2.getZ()))
-                                    .replace("%flags", String.format("PVP: %b, Mob spawning: %b, Mob damage %b, Use: %b, Build: %b, Invincible: %b, Leaves falling: %b, Explosion: %b, Entry: %b",
-                                            finalRegion.isPvp(), finalRegion.isMobSpawning(), finalRegion.isMobDamage(), finalRegion.isUse(), finalRegion.isBuild(), finalRegion.isInvincible(), finalRegion.isLeavesFalling(),
-                                            finalRegion.isExplosion(), finalRegion.isEntry()))
-                                    .replace("%owners", Other.playersToString(finalRegion.getOwners())).replace("%members", Other.playersToString(finalRegion.getMembers()))
-                                    .replace("%size", String.valueOf(finalRegion.getNumOfBlocks()))));
+                            message.getList("Info.Successfully").forEach(line -> Other.replaceRegionInfo(line, finalRegion));
                         }
                         else Print.toSender(sender, message.getMessage("Info.NotExists"));
                     }
@@ -100,6 +89,10 @@ public class Commands implements CommandExecutor
                             } else Print.toSender(sender, message.getMessage("NotYourRegion"));
                         } else Print.toSender(sender, message.getMessage("ChangeFlag.NotExists"));
                     } else Print.toSender(sender, message.getMessage("ChangeFlag.Usage"));
+                    return false;
+                case "all":
+                    if (validate(sender, true, "all"))
+                        Gui.allRegions(player);
                     return false;
                 case "delowner":
                     if (validate(sender, false, "delowner")) {

@@ -21,7 +21,7 @@ public class DataBase extends YAML
         inst = this;
     }
 
-    Thread readThread;
+    private Thread readThread;
     public void readRegions() {
         readThread = new Thread(() -> {
             synchronized (configuration) {

@@ -14,8 +14,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import ru.siaw.free.regions.Gui.FlagsProvider;
-import ru.siaw.free.regions.Gui.Gui;
 import ru.siaw.free.regions.Main;
 import ru.siaw.free.regions.Selection;
 
@@ -29,8 +27,6 @@ public class PlayerListener implements Listener
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent e) {
         Selection.getSelections().remove(e.getPlayer());
-        FlagsProvider.getRegions().remove(e.getPlayer());
-        Gui.getInventories().remove(e.getPlayer());
     }
 
     private static final List<Player> timer = new ArrayList<>();

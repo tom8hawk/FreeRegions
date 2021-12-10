@@ -12,9 +12,10 @@ import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.Other;
 import ru.siaw.free.regions.utils.Print;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Random;
 
-public class FlagsProvider implements InventoryProvider
+public class Flags implements InventoryProvider
 {
     @Getter private static final HashMap<Player, Region> regions = new HashMap<>();
 
@@ -62,7 +63,7 @@ public class FlagsProvider implements InventoryProvider
                         Message.inst.getList("Guis.ChangeFlag." + (region.isInvincible() ? "Remove" : "Add"))),
                 e -> {
                     if (!player.hasPermission("freerg.invincible") && !player.isOp()) {
-                        Gui.getInventories().get(player).close(player);
+                        inventoryContents.inventory().close(player);
                         Print.toPlayer(player, Message.inst.getMessage("NoPermissions"));
                         return;
                     }
@@ -97,8 +98,7 @@ public class FlagsProvider implements InventoryProvider
     public void update(Player player, InventoryContents inventoryContents) {
         if (ticks == 20 || first) {
             if (!Region.getRegions().contains(regions.get(player))) {
-                Gui.getInventories().get(player).close(player);
-                Gui.getInventories().remove(player);
+                inventoryContents.inventory().close(player);
                 regions.remove(player);
                 return;
             }
