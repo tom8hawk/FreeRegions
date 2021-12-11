@@ -5,7 +5,6 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
-import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,13 +14,9 @@ import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.Other;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class AllRegions implements InventoryProvider
 {
-    @Getter private static final HashMap<Player, List<Region>> regions = new HashMap<>();
-
     @Override
     public void init(Player player, InventoryContents contents) {
         Pagination pagination = contents.pagination();

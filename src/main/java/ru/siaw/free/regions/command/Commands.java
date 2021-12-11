@@ -61,7 +61,7 @@ public class Commands implements CommandExecutor
                     }
                     return false;
                 case "info":
-                    if (validate(sender, false, "info") || validate(sender, true, "info")) {
+                    if (validate(sender, false, "info")) {
                         Region region = null;
 
                         if (args.length == 1 && isPlayer(sender))
@@ -73,7 +73,7 @@ public class Commands implements CommandExecutor
                         if (region != null) {
                             Region finalRegion = region;
 
-                            message.getList("Info.Successfully").forEach(line -> Other.replaceRegionInfo(line, finalRegion));
+                            message.getList("Info.Successfully").forEach(line -> Print.toSender(sender, Other.replaceRegionInfo(line, finalRegion)));
                         }
                         else Print.toSender(sender, message.getMessage("Info.NotExists"));
                     }

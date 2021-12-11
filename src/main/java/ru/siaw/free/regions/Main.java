@@ -33,6 +33,9 @@ public class Main extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(new DispenseListener(), this);
         PistonListener.scheduling();
         DispenseListener.scheduling();
+
+        inventoryManager = new InventoryManager(this);
+        inventoryManager.init();
     }
 
     public void enable() {
@@ -40,16 +43,15 @@ public class Main extends JavaPlugin
         File dataFolder = getDataFolder();
         if (!dataFolder.exists())
             dataFolder.mkdir();
-        new Message();
         new DataBase();
+        new Message();
         getCommand("rg").setExecutor(new Commands());
-        inventoryManager = new InventoryManager(this);
-        inventoryManager.init();
     }
 
     @Override
     public void onDisable() {
         Region.getRegions().forEach(DataBase.inst::writeRegion);
+        Region.getRegions().clear();
         Print.toConsole("До новых встреч! :0");
     }
 }

@@ -102,7 +102,7 @@ public class Region
         return loc.getX() >= minX && loc.getX() <= maxX && loc.getY() >= minY && loc.getY() <= maxY && loc.getZ() >= minZ && loc.getZ() <= maxZ;
     }
 
-    public Thread countBlocks;
+    @Getter private Thread countBlocks;
     private void countBlocks(Boolean add) {
         countBlocks = new Thread(() -> {
             synchronized (add) {

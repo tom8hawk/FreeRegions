@@ -20,7 +20,6 @@ public class Gui
     }
 
     public static void allRegions(Player p) {
-        AllRegions.getRegions().put(p, Region.getRegions());
         SmartInventory inventory = SmartInventory.builder()
                 .provider(new AllRegions())
                 .manager(Main.inventoryManager)

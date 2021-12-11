@@ -21,9 +21,8 @@ public class DataBase extends YAML
         inst = this;
     }
 
-    private Thread readThread;
     public void readRegions() {
-        readThread = new Thread(() -> {
+        new Thread(() -> {
             synchronized (configuration) {
                 configuration.getKeys(false).forEach(key -> {
                     List<OfflinePlayer> owners = new ArrayList<>();
@@ -37,106 +36,94 @@ public class DataBase extends YAML
                     List<Double> loc1 = configuration.getDoubleList(key + ".location1");
                     List<Double> loc2 = configuration.getDoubleList(key + ".location2");
 
-                    try {
-                        new Region(key, new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc2.get(2)),
-                                Bukkit.getOfflinePlayer(UUID.fromString(configuration.getString(key + ".creator"))), owners, members, getBoolean(key + ".pvp"),
-                                getBoolean(key + ".mob-spawning"), getBoolean(key + ".mob-damage"), getBoolean(key + ".use"), getBoolean(key + ".piston"),
-                                getBoolean(key + ".build"), getBoolean(key + ".fire"), getBoolean(key + ".invincible"), getBoolean(key + ".leaves-falling"),
-                                getBoolean(key + ".explosion"), getBoolean(key + ".item-drop"), getBoolean(key + ".entry")).countBlocks.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    new Region(key, new Location(world, loc1.get(0),  loc1.get(1), loc1.get(2)), new Location(world, loc2.get(0), loc2.get(1), loc2.get(2)),
+                            Bukkit.getOfflinePlayer(UUID.fromString(configuration.getString(key + ".creator"))), owners, members, getBoolean(key + ".pvp"),
+                            getBoolean(key + ".mob-spawning"), getBoolean(key + ".mob-damage"), getBoolean(key + ".use"), getBoolean(key + ".piston"),
+                            getBoolean(key + ".build"), getBoolean(key + ".fire"), getBoolean(key + ".invincible"), getBoolean(key + ".leaves-falling"),
+                            getBoolean(key + ".explosion"), getBoolean(key + ".item-drop"), getBoolean(key + ".entry"));
                 });
-            }
-        });
-        readThread.start();
-    }
-
-    public void writeRegion(Region region) {
-        new Thread(() -> {
-            synchronized (configuration) {
-                if (region != null) {
-                    String key = region.getName() + ".";
-
-                    Location location1 = region.getLocation1();
-
-                    configuration.set(key + "world", location1.getWorld().getName());
-
-                    List<Double> loc1 = new ArrayList<>();
-                    loc1.add(location1.getX());
-                    loc1.add(location1.getY());
-                    loc1.add(location1.getZ());
-                    configuration.set(key + "location1", loc1);
-
-                    Location location2 = region.getLocation2();
-
-                    List<Double> loc2 = new ArrayList<>();
-                    loc2.add(location2.getX());
-                    loc2.add(location2.getY());
-                    loc2.add(location2.getZ());
-                    configuration.set(key + "location2", loc2);
-
-                    configuration.set(key + "creator", region.getCreator().getUniqueId().toString());
-
-                    List<String> ownersUUIDs = new ArrayList<>();
-                    region.getOwners().forEach(p -> ownersUUIDs.add(p.getUniqueId().toString()));
-                    configuration.set(key + "owners", ownersUUIDs);
-
-                    List<String> membersUUIDs = new ArrayList<>();
-                    region.getMembers().forEach(p -> membersUUIDs.add(p.getUniqueId().toString()));
-                    configuration.set(key + "members", membersUUIDs);
-
-                    configuration.set(key + "pvp", region.isPvp());
-                    configuration.set(key + "mob-spawning", region.isMobSpawning());
-                    configuration.set(key + "mob-damage", region.isMobDamage());
-                    configuration.set(key + "use", region.isUse());
-                    configuration.set(key + "piston", region.isPiston());
-                    configuration.set(key + "build", region.isBuild());
-                    configuration.set(key + "invincible", region.isInvincible());
-                    configuration.set(key + "leaves-falling", region.isLeavesFalling());
-                    configuration.set(key + "explosion", region.isExplosion());
-                    configuration.set(key + "item-drop", region.isItemDrop());
-                    configuration.set(key + "entry", region.isEntry());
-
-                    try {
-                        configuration.save(file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         }).start();
     }
 
-    public void cleanRegionData(String name) {
-        synchronized (configuration) {
-            configuration.set(name, null);
-            String key = name + ".";
+    public void writeRegion(Region region) {
+        if (region != null) {
+            String key = region.getName() + ".";
 
-            configuration.set(key + "world", null);
-            configuration.set(key + "location1", null);
-            configuration.set(key + "location2", null);
-            configuration.set(key + "creator", null);
-            configuration.set(key + "owners", null);
-            configuration.set(key + "members", null);
-            configuration.set(key + "pvp", null);
-            configuration.set(key + "mob-spawning", null);
-            configuration.set(key + "mob-damage", null);
-            configuration.set(key + "use", null);
-            configuration.set(key + "piston", null);
-            configuration.set(key + "build", null);
-            configuration.set(key + "invincible", null);
-            configuration.set(key + "leaves-falling", null);
-            configuration.set(key + "explosion", null);
-            configuration.set(key + "item-drop", null);
-            configuration.set(key + "entry", null);
+            Location location1 = region.getLocation1();
+
+            configuration.set(key + "world", location1.getWorld().getName());
+
+            List<Double> loc1 = new ArrayList<>();
+            loc1.add(location1.getX());
+            loc1.add(location1.getY());
+            loc1.add(location1.getZ());
+            configuration.set(key + "location1", loc1);
+
+            Location location2 = region.getLocation2();
+
+            List<Double> loc2 = new ArrayList<>();
+            loc2.add(location2.getX());
+            loc2.add(location2.getY());
+            loc2.add(location2.getZ());
+            configuration.set(key + "location2", loc2);
+
+            configuration.set(key + "creator", region.getCreator().getUniqueId().toString());
+
+            List<String> ownersUUIDs = new ArrayList<>();
+            region.getOwners().forEach(p -> ownersUUIDs.add(p.getUniqueId().toString()));
+            configuration.set(key + "owners", ownersUUIDs);
+
+            List<String> membersUUIDs = new ArrayList<>();
+            region.getMembers().forEach(p -> membersUUIDs.add(p.getUniqueId().toString()));
+            configuration.set(key + "members", membersUUIDs);
+
+            configuration.set(key + "pvp", region.isPvp());
+            configuration.set(key + "mob-spawning", region.isMobSpawning());
+            configuration.set(key + "mob-damage", region.isMobDamage());
+            configuration.set(key + "use", region.isUse());
+            configuration.set(key + "piston", region.isPiston());
+            configuration.set(key + "build", region.isBuild());
+            configuration.set(key + "invincible", region.isInvincible());
+            configuration.set(key + "leaves-falling", region.isLeavesFalling());
+            configuration.set(key + "explosion", region.isExplosion());
+            configuration.set(key + "item-drop", region.isItemDrop());
+            configuration.set(key + "entry", region.isEntry());
 
             try {
                 configuration.save(file);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void cleanRegionData(String name) {
+        configuration.set(name, null);
+        String key = name + ".";
+
+        configuration.set(key + "world", null);
+        configuration.set(key + "location1", null);
+        configuration.set(key + "location2", null);
+        configuration.set(key + "creator", null);
+        configuration.set(key + "owners", null);
+        configuration.set(key + "members", null);
+        configuration.set(key + "pvp", null);
+        configuration.set(key + "mob-spawning", null);
+        configuration.set(key + "mob-damage", null);
+        configuration.set(key + "use", null);
+        configuration.set(key + "piston", null);
+        configuration.set(key + "build", null);
+        configuration.set(key + "invincible", null);
+        configuration.set(key + "leaves-falling", null);
+        configuration.set(key + "explosion", null);
+        configuration.set(key + "item-drop", null);
+        configuration.set(key + "entry", null);
+
+        try {
+            configuration.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -144,7 +131,7 @@ public class DataBase extends YAML
         return configuration.getBoolean(path);
     }
 
-    public static Thread scheduledWriteThread;
+    private static Thread scheduledWriteThread;
     public void load() {
         try {
             configuration.load(file);
@@ -154,16 +141,21 @@ public class DataBase extends YAML
         }
 
         new Thread(() -> {
-            readRegions();
             Print.toConsole("Чтение регионов...");
+            readRegions();
 
-            try {
-                readThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            List<String> keys = new ArrayList<>(configuration.getKeys(false));
+            while (true) {
+                List<Region> regions = new ArrayList<>(Region.getRegions());
+
+                List<String> names = new ArrayList<>();
+                regions.forEach(rg -> names.add(rg.getName()));
+
+                if (names.containsAll(keys) && regions.stream().noneMatch(rg -> rg.getCountBlocks().isAlive()))
+                    break;
             }
 
-            Print.toConsole("Список регионов загружен!");
+            Print.toConsole(String.format("Загружено регионов: %d", Region.getRegions().size()));
         }).start();
 
         if (scheduledWriteThread == null) {

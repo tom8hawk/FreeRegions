@@ -33,26 +33,26 @@ public class Other
         return stack;
     }
 
-    public static String playersToString(List<OfflinePlayer> list) {
+    public static String replaceRegionInfo(String line, Region region) {
+        Location pos1 = region.getLocation1();
+        Location pos2 = region.getLocation2();
+
+        return line.replace("%region", region.getName())
+                .replace("%pos1", String.format("%d, %d, %d", (int) pos1.getX(), (int) pos1.getY(), (int) pos1.getZ()))
+                .replace("%pos2", String.format("%d, %d, %d", (int) pos2.getX(), (int) pos2.getY(), (int) pos2.getZ()))
+                .replace("%flags", String.format("PVP: %b, Mob spawning: %b, Mob damage %b, Use: %b, Build: %b, Invincible: %b, Leaves falling: %b, Explosion: %b, Entry: %b",
+                        region.isPvp(), region.isMobSpawning(), region.isMobDamage(), region.isUse(), region.isBuild(), region.isInvincible(), region.isLeavesFalling(),
+                        region.isExplosion(), region.isEntry())).replace("%owners", Other.playersToString(region.getOwners()))
+                .replace("%members", Other.playersToString(region.getMembers())).replace("%creator", region.getCreator().getName())
+                .replace("%size", String.valueOf(region.getNumOfBlocks()));
+    }
+
+    private static String playersToString(List<OfflinePlayer> list) {
         StringBuilder builder = new StringBuilder(list.isEmpty() ? "Нет" : list.get(0).getName());
         if (list.size() > 1) {
             list.remove(0);
             list.forEach(p -> builder.append(", ").append(p.getName()));
         }
         return builder.toString();
-    }
-    
-    public static String replaceRegionInfo(String line, Region region) {
-        Location pos1 = region.getLocation1();
-        Location pos2 = region.getLocation2();
-        
-        return line.replace("%region", region.getName())
-                .replace("%pos1", String.format("%d, %d, %d", (int) pos1.getX(), (int) pos1.getY(), (int) pos1.getZ()))
-                .replace("%pos2", String.format("%d, %d, %d", (int) pos2.getX(), (int) pos2.getY(), (int) pos2.getZ()))
-                .replace("%flags", String.format("PVP: %b, Mob spawning: %b, Mob damage %b, Use: %b, Build: %b, Invincible: %b, Leaves falling: %b, Explosion: %b, Entry: %b",
-                        region.isPvp(), region.isMobSpawning(), region.isMobDamage(), region.isUse(), region.isBuild(), region.isInvincible(), region.isLeavesFalling(),
-                        region.isExplosion(), region.isEntry()))
-                .replace("%owners", Other.playersToString(region.getOwners())).replace("%members", Other.playersToString(region.getMembers()))
-                .replace("%size", String.valueOf(region.getNumOfBlocks()));
     }
 }
