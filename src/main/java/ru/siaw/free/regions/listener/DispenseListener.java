@@ -78,7 +78,7 @@ public class DispenseListener implements Listener {
             });
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockDispense(BlockDispenseEvent e) {
         if (!e.isCancelled()) {
             Region region = Region.getByLocation(e.getBlock().getLocation());

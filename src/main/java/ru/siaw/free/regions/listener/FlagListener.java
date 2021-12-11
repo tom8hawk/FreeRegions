@@ -9,10 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -25,8 +22,8 @@ import java.util.List;
 
 public class FlagListener implements Listener
 {
-    @EventHandler
-    public void onPVP(EntityDamageByEntityEvent e) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onDamage(EntityDamageByEntityEvent e) {
         Entity entity = e.getEntity();
         if (!(entity instanceof Player))
             return;
@@ -43,12 +40,12 @@ public class FlagListener implements Listener
                     e.setCancelled(true);
                     e.getDamager().sendMessage(Message.inst.getMessage("Flags.NotPvP"));
                 }
-            } else if (damager instanceof Monster && !region.isMobDamage())
+            } else if (!region.isMobDamage())
                 e.setCancelled(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlace(BlockPlaceEvent e) {
         Region region = Region.getByLocation(e.getBlockPlaced().getLocation());
 
@@ -62,7 +59,7 @@ public class FlagListener implements Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onMultiPlace(BlockMultiPlaceEvent e) {
         Region region = Region.getByLocation(e.getBlockPlaced().getLocation());
 
@@ -76,7 +73,7 @@ public class FlagListener implements Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBreak(BlockBreakEvent e) {
         Region region = Region.getByLocation(e.getBlock().getLocation());
 
@@ -90,7 +87,7 @@ public class FlagListener implements Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntry(PlayerMoveEvent e) {
         Region region = Region.getByLocation(e.getTo());
 
@@ -98,13 +95,13 @@ public class FlagListener implements Listener
             Player player = e.getPlayer();
 
             if (!bypass(player) && !region.isEntry() && !region.isPlayerInRegion(player)) {
-                e.setCancelled(true);
+                e.getPlayer().teleport(e.getFrom());
                 e.getPlayer().sendMessage(Message.inst.getMessage("Flags.NotMove"));
             }
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInvincible(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player))
             return;
@@ -156,7 +153,7 @@ public class FlagListener implements Listener
         toRemove.forEach(e.blockList()::remove);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onItemDrop(PlayerDropItemEvent e) {
         Region region = Region.getByLocation(e.getItemDrop().getLocation());
         Player ejector = e.getPlayer();
@@ -167,7 +164,7 @@ public class FlagListener implements Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent e) {
         if (e.getClickedBlock() == null)
             return;
@@ -181,7 +178,7 @@ public class FlagListener implements Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onMobSpawn(CreatureSpawnEvent e) {
         Region region = Region.getByLocation(e.getLocation());
 
@@ -189,7 +186,7 @@ public class FlagListener implements Listener
             e.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockIgnite(BlockIgniteEvent e) {
         Region region = Region.getByLocation(e.getBlock().getLocation());
 
@@ -199,7 +196,7 @@ public class FlagListener implements Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onLeavesDecay(LeavesDecayEvent e) {
         Region region = Region.getByLocation(e.getBlock().getLocation());
 

@@ -76,7 +76,7 @@ public class PistonListener implements Listener
             });
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPistonRetract(BlockPistonRetractEvent e) {
         Region region = null;
 
@@ -102,7 +102,7 @@ public class PistonListener implements Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPistonExtend(BlockPistonExtendEvent e) {
         Region region = null;
         if (e.getBlocks().size() < 1) return;
