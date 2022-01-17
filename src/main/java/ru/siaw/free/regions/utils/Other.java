@@ -9,6 +9,7 @@ import ru.siaw.free.regions.Region;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Other
 {
@@ -48,11 +49,6 @@ public class Other
     }
 
     private static String playersToString(List<OfflinePlayer> list) {
-        StringBuilder builder = new StringBuilder(list.isEmpty() ? "Нет" : list.get(0).getName());
-        if (list.size() > 1) {
-            list.remove(0);
-            list.forEach(p -> builder.append(", ").append(p.getName()));
-        }
-        return builder.toString();
+        return list.isEmpty() ? "Нет" : list.parallelStream().map(OfflinePlayer::getName).collect(Collectors.joining(", "));
     }
 }

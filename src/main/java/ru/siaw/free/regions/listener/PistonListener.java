@@ -8,6 +8,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import ru.siaw.free.regions.Main;
 import ru.siaw.free.regions.Region;
 import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.Print;
@@ -21,7 +22,7 @@ public class PistonListener implements Listener
     private static final HashMap<Block, Player> placedPistons = new HashMap<>();
 
     public static void scheduling() {
-        new Thread(() -> {
+        Main.executor.execute(() -> {
             while (true) {
                 try {
                     Thread.sleep(300000);
@@ -39,7 +40,7 @@ public class PistonListener implements Listener
                 });
                 toRemove.forEach(placedPistons::remove);
             }
-        }).start();
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

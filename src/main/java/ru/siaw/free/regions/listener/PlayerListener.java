@@ -22,8 +22,6 @@ import java.util.List;
 
 public class PlayerListener implements Listener
 {
-    protected final Main plugin = Main.inst;
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent e) {
         Selection.getSelections().remove(e.getPlayer());
@@ -32,36 +30,38 @@ public class PlayerListener implements Listener
     private static final List<Player> timer = new ArrayList<>();
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInteract(PlayerInteractEvent e) {
-        Player p = e.getPlayer();
-        if (p == null || timer.contains(p)) return;
-        PlayerInventory inventory = p.getInventory();
-        if (inventory == null) return;
-        ItemStack itemStack = inventory.getItemInMainHand();
-        if (itemStack == null) return;
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null) return;
-        String displayName = meta.getDisplayName();
-        if (displayName == null) return;
+        Main.executor.execute(() -> {
+            Player p = e.getPlayer();
+            if (p == null || timer.contains(p)) return;
+            PlayerInventory inventory = p.getInventory();
+            if (inventory == null) return;
+            ItemStack itemStack = inventory.getItemInMainHand();
+            if (itemStack == null) return;
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta == null) return;
+            String displayName = meta.getDisplayName();
+            if (displayName == null) return;
 
-        if (itemStack.getType() == Material.ARROW && displayName.equals("§eВыделитель региона")) {
-            Action action = e.getAction();
-            if (action == null) return;
+            if (itemStack.getType() == Material.ARROW && displayName.equals("§eВыделитель региона")) {
+                Action action = e.getAction();
+                if (action == null) return;
 
-            Selection selection = Selection.get(p);
+                Selection selection = Selection.get(p);
 
-            Block block = e.getClickedBlock();
-            if (block == null || block.getType() == Material.AIR) return;
+                Block block = e.getClickedBlock();
+                if (block == null || block.getType() == Material.AIR) return;
 
-            Location location = block.getLocation();
-            if (location == null) return;
+                Location location = block.getLocation();
+                if (location == null) return;
 
-            if (action == Action.LEFT_CLICK_BLOCK)
-                selection.setPos1(location, p);
-            else if (action == Action.RIGHT_CLICK_BLOCK)
-                selection.setPos2(location, p);
+                if (action == Action.LEFT_CLICK_BLOCK)
+                    selection.setPos1(location, p);
+                else if (action == Action.RIGHT_CLICK_BLOCK)
+                    selection.setPos2(location, p);
 
-            timer.add(p);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> timer.remove(p), 5L);
-        }
+                timer.add(p);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.inst, () -> timer.remove(p), 5L);
+            }
+        });
     }
 }

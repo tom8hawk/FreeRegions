@@ -13,11 +13,14 @@ import ru.siaw.free.regions.listener.PlayerListener;
 import ru.siaw.free.regions.utils.Print;
 
 import java.io.File;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class Main extends JavaPlugin
 {
     public static Main inst;
     public static InventoryManager inventoryManager;
+    public static final Executor executor = Executors.newCachedThreadPool();
 
     public Main() {
         inst = this;

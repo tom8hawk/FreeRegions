@@ -12,7 +12,6 @@ import java.util.HashMap;
 public class Selection
 {
     @Getter private static final HashMap<Player, Selection> selections = new HashMap<>();
-
     @Getter private Location pos1, pos2;
 
     public Selection(Player player) {
@@ -20,23 +19,21 @@ public class Selection
     }
 
     public void create(String name) {
-        new Thread(() -> {
-            synchronized (selections) {
-                Player[] toRemove = new Player[1];
-                selections.forEach((player, selection) -> {
-                    if (selection.equals(this)) {
-                        if (pos1 == null || pos2 == null) {
-                            Print.toPlayer(player, Message.inst.getMessage("Positions.NoSelectRegion"));
-                            return;
-                        }
-
-                        new Region(name, pos1, pos2, player, false, true, false, false, false, false, false, false, true, false, false, true);
-                        toRemove[0] = player;
+        Main.executor.execute(() -> {
+            Player[] toRemove = new Player[1];
+            selections.forEach((player, selection) -> {
+                if (selection.equals(this)) {
+                    if (pos1 == null || pos2 == null) {
+                        Print.toPlayer(player, Message.inst.getMessage("Positions.NoSelectRegion"));
+                        return;
                     }
-                });
-                selections.remove(toRemove[0]);
-            }
-        }).start();
+
+                    new Region(name, pos1, pos2, player, false, true, false, false, false, false, false, false, true, false, false, true);
+                    toRemove[0] = player;
+                }
+            });
+            selections.remove(toRemove[0]);
+        });
     }
 
     public static Selection get(Player player) {

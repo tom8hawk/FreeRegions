@@ -45,7 +45,7 @@ public class Region
         this.itemDrop = itemDrop;
         this.entry = entry;
 
-        countBlocks(true);
+        countBlocks(() -> regions.add(this));
     }
 
     public Region(String name, Location location1, Location location2, Player creator, boolean pvp, boolean mobSpawning, boolean mobDamage,
@@ -68,7 +68,43 @@ public class Region
         this.itemDrop = itemDrop;
         this.entry = entry;
 
-        validate(name);
+        countBlocks(() -> {
+            if (!location1.getWorld().equals(location2.getWorld()))
+                Print.toPlayer(creator, Message.inst.getMessage("Positions.DifferentWorlds"));
+
+            PlayerUtil util = new PlayerUtil(creator);
+            int limitOfBlocks = util.getLimitOfBlocks();
+
+            if (numOfBlocks > limitOfBlocks) {
+                Print.toPlayer(creator, Message.inst.getMessage("Create.BlocksLimit"));
+                return;
+            }
+
+            int regionsCount = 0;
+            for (Region rg : regions) {
+                if (rg.creator.equals(creator))
+                    regionsCount++;
+
+                if (rg.name.equalsIgnoreCase(name)) {
+                    Print.toPlayer(creator, Message.inst.getMessage("Create.Exists"));
+                    return;
+                }
+
+                if (rg.isLocInRegion(location1) || rg.isLocInRegion(location2)) {
+                    Print.toPlayer(creator, Message.inst.getMessage("Create.OtherRegions").replace("%other", rg.getName()));
+                    return;
+                }
+            }
+
+            if (regionsCount > util.getLimitOfRegions()) {
+                Print.toPlayer(creator, Message.inst.getMessage("Create.RegionCountLimit"));
+                return;
+            }
+
+            this.name = name;
+            regions.add(this);
+            Print.toPlayer(creator, Message.inst.getMessage("Create.Successfully").replace("%region", name).replace("%size", String.valueOf(numOfBlocks)));
+        });
     }
 
     public static Region getByName(String name) {
@@ -102,78 +138,24 @@ public class Region
         return loc.getX() >= minX && loc.getX() <= maxX && loc.getY() >= minY && loc.getY() <= maxY && loc.getZ() >= minZ && loc.getZ() <= maxZ;
     }
 
-    @Getter private Thread countBlocks;
-    private void countBlocks(Boolean add) {
-        countBlocks = new Thread(() -> {
-            synchronized (add) {
-                int minX = (Math.min(location1.getBlockX(), location2.getBlockX()));
-                int maxX = (Math.max(location1.getBlockX(), location2.getBlockX()));
+    private void countBlocks(Runnable task) {
+        Main.executor.execute(() -> {
+            int minX = (Math.min(location1.getBlockX(), location2.getBlockX()));
+            int maxX = (Math.max(location1.getBlockX(), location2.getBlockX()));
 
-                int minY = (Math.min(location1.getBlockY(), location2.getBlockY()));
-                int maxY = (Math.max(location1.getBlockY(), location2.getBlockY()));
+            int minY = (Math.min(location1.getBlockY(), location2.getBlockY()));
+            int maxY = (Math.max(location1.getBlockY(), location2.getBlockY()));
 
-                int minZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
-                int maxZ = (Math.max(location1.getBlockZ(), location2.getBlockZ()));
+            int minZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
+            int maxZ = (Math.max(location1.getBlockZ(), location2.getBlockZ()));
 
-                for (int x = minX; x <= maxX; x++)
-                    for (int z = minZ; z <= maxZ; z++)
-                        for (int y = minY; y <= maxY; y++)
-                            numOfBlocks++;
-            }
+            for (int x = minX; x <= maxX; x++)
+                for (int z = minZ; z <= maxZ; z++)
+                    for (int y = minY; y <= maxY; y++)
+                        numOfBlocks++;
+
+            task.run();
         });
-        countBlocks.start();
-        if (add) regions.add(this);
-    }
-
-    private void validate(String name) {
-        new Thread(() -> {
-            synchronized (regions) {
-                Player creator = (Player) this.creator;
-
-                if (!location1.getWorld().equals(location2.getWorld())) {
-                    Print.toPlayer(creator, Message.inst.getMessage("Positions.DifferentWorlds"));
-                }
-
-                PlayerUtil util = new PlayerUtil(creator);
-                int limitOfBlocks = util.getLimitOfBlocks();
-
-                countBlocks(false);
-                try {
-                    countBlocks.join();
-                    if (numOfBlocks > limitOfBlocks) {
-                        Print.toPlayer(creator, Message.inst.getMessage("Create.BlocksLimit"));
-                        return;
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                int regionsCount = 0;
-                for (Region rg : regions) {
-                    if (rg.creator.equals(creator))
-                        regionsCount++;
-
-                    if (rg.name.equalsIgnoreCase(name)) {
-                        Print.toPlayer(creator, Message.inst.getMessage("Create.Exists"));
-                        return;
-                    }
-
-                    if (rg.isLocInRegion(location1) || rg.isLocInRegion(location2)) {
-                        Print.toPlayer(creator, Message.inst.getMessage("Create.OtherRegions").replace("%other", rg.getName()));
-                        return;
-                    }
-                }
-
-                if (regionsCount > util.getLimitOfRegions()) {
-                    Print.toPlayer(creator, Message.inst.getMessage("Create.RegionCountLimit"));
-                    return;
-                }
-
-                this.name = name;
-                regions.add(this);
-                Print.toPlayer(creator, Message.inst.getMessage("Create.Successfully").replace("%region", name).replace("%size", String.valueOf(numOfBlocks)));
-            }
-        }).start();
     }
 
     public void remove() {
