@@ -9,9 +9,7 @@ import ru.siaw.free.regions.Main;
 import ru.siaw.free.regions.Selection;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class PlayerUtil
 {
@@ -87,14 +85,8 @@ public class PlayerUtil
 
                 if (loc1 == null || loc2 == null || !loc1.equals(pos1) || !loc2.equals(pos2)) break;
 
-                AtomicReference<Iterator<Location>> corner = new AtomicReference<>(corners.iterator());
-                effect.parallelStream().forEach(loc -> {
-                    player.spigot().playEffect(loc, Effect.FLAME, 0, 0, 0, 0, 0, 0, 1, 100);
-                    
-                    if (!corner.get().hasNext())
-                        corner.set(corners.iterator());
-                    player.spigot().playEffect(corner.get().next(), Effect.CLOUD, 0, 0, 0, 0, 0, 0, 30, 100);
-                });
+                effect.parallelStream().forEach(loc -> player.spigot().playEffect(loc, Effect.FLAME, 0, 0, 0, 0, 0, 0, 1, 100));
+                corners.parallelStream().forEach(corner -> player.spigot().playEffect(corner, Effect.CLOUD, 0, 0, 0, 0, 0, 0, 30, 100));
 
                 try {
                     Thread.sleep(500);

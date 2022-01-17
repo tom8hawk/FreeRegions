@@ -7,7 +7,9 @@ import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.PlayerUtil;
 import ru.siaw.free.regions.utils.Print;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Selection
 {
@@ -20,28 +22,28 @@ public class Selection
 
     public void create(String name) {
         Main.executor.execute(() -> {
-            Player[] toRemove = new Player[1];
-            selections.forEach((player, selection) -> {
-                if (selection.equals(this)) {
-                    if (pos1 == null || pos2 == null) {
-                        Print.toPlayer(player, Message.inst.getMessage("Positions.NoSelectRegion"));
-                        return;
-                    }
+            List<Player> toRemove = new ArrayList<>(1);
 
-                    new Region(name, pos1, pos2, player, false, true, false, false, false, false, false, false, true, false, false, true);
-                    toRemove[0] = player;
+            selections.entrySet().parallelStream().filter(value -> value.getValue().equals(this)).forEach(value -> {
+                Player player = value.getKey();
+
+                if (pos1 == null || pos2 == null) {
+                    Print.toPlayer(player, Message.inst.getMessage("Positions.NoSelectRegion"));
+                    return;
                 }
+
+                new Region(name, pos1, pos2, player, false, true, false, false, false, false, false, false, true, false, false, true);
+                toRemove.add(player);
             });
-            selections.remove(toRemove[0]);
+
+            toRemove.forEach(selections::remove);
         });
     }
 
     public static Selection get(Player player) {
         Selection selection = selections.get(player);
-        return selection == null ? new Selection(player) : selection;
+        return selection != null ? selection : new Selection(player);
     }
-
-    // Геттеры, сеттеры
 
     public void setPos1(Location pos1, Player p) {
         this.pos1 = pos1;

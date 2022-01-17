@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import ru.siaw.free.regions.Main;
 import ru.siaw.free.regions.Region;
 import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.Print;
@@ -46,54 +47,64 @@ public class DispenseListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlaceDispenser(BlockPlaceEvent e) {
-        if (!e.isCancelled() && (e.getBlock().getType() == Material.DISPENSER)
-                && Region.getByLocation(e.getBlock().getLocation()) == null)
-            placedDispensers.put(e.getBlockPlaced(), e.getPlayer());
+        Main.executor.execute(() -> {
+            if (!e.isCancelled() && (e.getBlock().getType() == Material.DISPENSER)
+                    && Region.getByLocation(e.getBlock().getLocation()) == null)
+                placedDispensers.put(e.getBlockPlaced(), e.getPlayer());
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBreakDispenser(BlockBreakEvent e) {
-        if (!e.isCancelled() && (e.getBlock().getType() == Material.DISPENSER)
-                && Region.getByLocation(e.getBlock().getLocation()) == null)
-            placedDispensers.remove(e.getBlock());
+        Main.executor.execute(() -> {
+            if (!e.isCancelled() && (e.getBlock().getType() == Material.DISPENSER)
+                    && Region.getByLocation(e.getBlock().getLocation()) == null)
+                placedDispensers.remove(e.getBlock());
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockExplode(BlockExplodeEvent e) {
-        if (!e.isCancelled())
-            e.blockList().forEach(block -> {
-                if ((block.getType() == Material.DISPENSER) &&
-                        Region.getByLocation(block.getLocation()) == null)
-                    placedDispensers.remove(block);
-            });
+        Main.executor.execute(() -> {
+            if (!e.isCancelled())
+                e.blockList().forEach(block -> {
+                    if ((block.getType() == Material.DISPENSER) &&
+                            Region.getByLocation(block.getLocation()) == null)
+                        placedDispensers.remove(block);
+                });
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityExplode(EntityExplodeEvent e) {
-        if (!e.isCancelled())
-            e.blockList().forEach(block -> {
-                if ((block.getType() == Material.DISPENSER) &&
-                        Region.getByLocation(block.getLocation()) == null)
-                    placedDispensers.remove(block);
-            });
+        Main.executor.execute(() -> {
+            if (!e.isCancelled())
+                e.blockList().forEach(block -> {
+                    if ((block.getType() == Material.DISPENSER) &&
+                            Region.getByLocation(block.getLocation()) == null)
+                        placedDispensers.remove(block);
+                });
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockDispense(BlockDispenseEvent e) {
-        if (!e.isCancelled()) {
-            Region region = Region.getByLocation(e.getBlock().getLocation());
+        Main.executor.execute(() -> {
+            if (!e.isCancelled()) {
+                Region region = Region.getByLocation(e.getBlock().getLocation());
 
-            if (region != null && !region.isItemDrop()) {
-                if (placedDispensers.containsKey(e.getBlock())) {
-                    Player player = placedDispensers.get(e.getBlock());
+                if (region != null && !region.isItemDrop()) {
+                    if (placedDispensers.containsKey(e.getBlock())) {
+                        Player player = placedDispensers.get(e.getBlock());
 
-                    if (region.isPlayerInRegion(player))
-                        return;
+                        if (region.isPlayerInRegion(player))
+                            return;
 
-                    Print.toPlayer(player, Message.inst.getMessage("Flags.NotUse"));
+                        Print.toPlayer(player, Message.inst.getMessage("Flags.NotUse"));
+                    }
+                    e.setCancelled(true);
                 }
-                e.setCancelled(true);
             }
-        }
+        });
     }
 }

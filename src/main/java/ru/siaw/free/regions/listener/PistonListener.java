@@ -45,36 +45,44 @@ public class PistonListener implements Listener
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlacePiston(BlockPlaceEvent e) {
-        if (!e.isCancelled() && (e.getBlock().getType() == Material.PISTON_BASE || e.getBlock().getType() == Material.PISTON_STICKY_BASE)
-                && Region.getByLocation(e.getBlock().getLocation()) == null)
-            placedPistons.put(e.getBlockPlaced(), e.getPlayer());
+        Main.executor.execute(() -> {
+            if (!e.isCancelled() && (e.getBlock().getType() == Material.PISTON_BASE || e.getBlock().getType() == Material.PISTON_STICKY_BASE)
+                    && Region.getByLocation(e.getBlock().getLocation()) == null)
+                placedPistons.put(e.getBlockPlaced(), e.getPlayer());
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBreakPiston(BlockBreakEvent e) {
-        if (!e.isCancelled() && (e.getBlock().getType() == Material.PISTON_BASE || e.getBlock().getType() == Material.PISTON_STICKY_BASE)
-                && Region.getByLocation(e.getBlock().getLocation()) == null)
-            placedPistons.remove(e.getBlock());
+        Main.executor.execute(() -> {
+            if (!e.isCancelled() && (e.getBlock().getType() == Material.PISTON_BASE || e.getBlock().getType() == Material.PISTON_STICKY_BASE)
+                    && Region.getByLocation(e.getBlock().getLocation()) == null)
+                placedPistons.remove(e.getBlock());
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockExplode(BlockExplodeEvent e) {
-        if (!e.isCancelled())
-            e.blockList().forEach(block -> {
-                if ((block.getType() == Material.PISTON_BASE || block.getType() == Material.PISTON_STICKY_BASE) &&
-                        Region.getByLocation(block.getLocation()) == null)
-                    placedPistons.remove(block);
-            });
+        Main.executor.execute(() -> {
+            if (!e.isCancelled())
+                e.blockList().forEach(block -> {
+                    if ((block.getType() == Material.PISTON_BASE || block.getType() == Material.PISTON_STICKY_BASE) &&
+                            Region.getByLocation(block.getLocation()) == null)
+                        placedPistons.remove(block);
+                });
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityExplode(EntityExplodeEvent e) {
-        if (!e.isCancelled())
-            e.blockList().forEach(block -> {
-                if ((block.getType() == Material.PISTON_BASE || block.getType() == Material.PISTON_STICKY_BASE) &&
-                        Region.getByLocation(block.getLocation()) == null)
-                    placedPistons.remove(block);
-            });
+        Main.executor.execute(() -> {
+            if (!e.isCancelled())
+                e.blockList().forEach(block -> {
+                    if ((block.getType() == Material.PISTON_BASE || block.getType() == Material.PISTON_STICKY_BASE) &&
+                            Region.getByLocation(block.getLocation()) == null)
+                        placedPistons.remove(block);
+                });
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

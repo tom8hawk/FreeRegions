@@ -5,6 +5,7 @@ import ru.siaw.free.regions.utils.Print;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class Message extends YAML
 {
@@ -21,11 +22,7 @@ public final class Message extends YAML
     }
 
     public List<String> getList(String path) {
-        List<String> output = configuration.getStringList(path);
-        for (int i = 0; i < output.size(); i++) {
-            output.set(i, ChatColor.translateAlternateColorCodes('&', output.get(i)));
-        }
-        return output;
+        return configuration.getStringList(path).stream().map(line -> ChatColor.translateAlternateColorCodes('&', line)).collect(Collectors.toList());
     }
 
     @Override
