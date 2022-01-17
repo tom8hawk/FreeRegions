@@ -34,6 +34,7 @@ public class Main extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(new FlagListener(), this);
         Bukkit.getPluginManager().registerEvents(new PistonListener(), this);
         Bukkit.getPluginManager().registerEvents(new DispenseListener(), this);
+
         PistonListener.scheduling();
         DispenseListener.scheduling();
 
@@ -43,11 +44,14 @@ public class Main extends JavaPlugin
 
     public void enable() {
         Print.toConsole("Запуск! :>");
+
         File dataFolder = getDataFolder();
         if (!dataFolder.exists())
             dataFolder.mkdir();
+
         new DataBase();
         new Message();
+
         getCommand("rg").setExecutor(new Commands());
     }
 
@@ -55,6 +59,7 @@ public class Main extends JavaPlugin
     public void onDisable() {
         Region.getRegions().forEach(DataBase.inst::writeRegion);
         Region.getRegions().clear();
+
         Print.toConsole("До новых встреч! :0");
     }
 }

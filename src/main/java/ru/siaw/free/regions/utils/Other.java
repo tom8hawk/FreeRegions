@@ -3,25 +3,22 @@ package ru.siaw.free.regions.utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import ru.siaw.free.regions.Region;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Other
 {
     public static ItemStack createItemStack(Material material, String... lore) {
-        ItemStack stack = new ItemStack(material);
-        ItemMeta meta = stack.getItemMeta();
+        List<String> list = Stream.of(lore).collect(Collectors.toList());
 
-        meta.setDisplayName(lore[0]);
-
-        meta.setLore(Arrays.asList(lore).subList(1, lore.length));
-        stack.setItemMeta(meta);
-        return stack;
+        return createItemStackWithList(material, list.get(0), list.size() > 1 ? list.subList(1, list.size()) : new ArrayList<>());
     }
 
     public static ItemStack createItemStackWithList(Material material, String name, List<String> lore) {
@@ -30,6 +27,8 @@ public class Other
 
         meta.setDisplayName(name);
         meta.setLore(lore);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+
         stack.setItemMeta(meta);
         return stack;
     }
