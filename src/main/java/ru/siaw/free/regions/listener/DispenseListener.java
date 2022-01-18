@@ -16,33 +16,25 @@ import ru.siaw.free.regions.Region;
 import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.Print;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class DispenseListener implements Listener {
     private static final HashMap<Block, Player> placedDispensers = new HashMap<>();
 
     public static void scheduling() {
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(300000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            public void run() {
                 List<Block> toRemove = new ArrayList<>();
 
-                placedDispensers.forEach((block, p) -> {
-                    Block nowBlock = block.getWorld().getBlockAt(block.getLocation());
+                placedDispensers.entrySet().parallelStream().forEach(entry -> {
+                    Block nowBlock = entry.getKey().getWorld().getBlockAt(entry.getKey().getLocation());
 
                     if (nowBlock.getType() != Material.DISPENSER)
-                        toRemove.add(block);
+                        toRemove.add(entry.getKey());
                 });
                 toRemove.forEach(placedDispensers::remove);
             }
-        }).start();
+        }, 300000L, 300000L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

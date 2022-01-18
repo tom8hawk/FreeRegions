@@ -62,7 +62,7 @@ public class PlayerUtil
             }
 
             List<Location> effect = new ArrayList<>(initialLocations);
-            initialLocations.forEach(loc -> {
+            initialLocations.parallelStream().forEach(loc -> {
                 for (double nowY = yMin + 1; nowY <= yMax; nowY++)
                     effect.add(new Location(w, loc.getX(), nowY, loc.getZ()));
             });

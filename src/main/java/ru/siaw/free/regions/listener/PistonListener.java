@@ -13,34 +13,26 @@ import ru.siaw.free.regions.Region;
 import ru.siaw.free.regions.config.Message;
 import ru.siaw.free.regions.utils.Print;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class PistonListener implements Listener
 {
     private static final HashMap<Block, Player> placedPistons = new HashMap<>();
 
     public static void scheduling() {
-        Main.executor.execute(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(300000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            public void run() {
                 List<Block> toRemove = new ArrayList<>();
 
-                placedPistons.forEach((block, p) -> {
-                    Block nowBlock = block.getWorld().getBlockAt(block.getLocation());
+                placedPistons.entrySet().parallelStream().forEach(entry -> {
+                    Block nowBlock = entry.getKey().getWorld().getBlockAt(entry.getKey().getLocation());
 
                     if (nowBlock.getType() != Material.PISTON_BASE && nowBlock.getType() != Material.PISTON_STICKY_BASE)
-                        toRemove.add(block);
+                        toRemove.add(entry.getKey());
                 });
                 toRemove.forEach(placedPistons::remove);
             }
-        });
+        }, 300000L, 300000L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
