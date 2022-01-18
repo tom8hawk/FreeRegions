@@ -12,6 +12,7 @@ import ru.siaw.free.regions.utils.Print;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Region
 {
@@ -80,45 +81,41 @@ public class Region
                 return;
             }
 
-            int regionsCount = 0;
-            for (Region rg : regions) {
+            AtomicInteger regionsCount = new AtomicInteger();
+            if (regions.parallelStream().noneMatch(rg -> {
                 if (rg.creator.equals(creator))
-                    regionsCount++;
+                    regionsCount.getAndIncrement();
 
                 if (rg.name.equalsIgnoreCase(name)) {
                     Print.toPlayer(creator, Message.inst.getMessage("Create.Exists"));
-                    return;
+                    return true;
                 }
 
                 if (rg.isLocInRegion(location1) || rg.isLocInRegion(location2)) {
                     Print.toPlayer(creator, Message.inst.getMessage("Create.OtherRegions").replace("%other", rg.getName()));
+                    return true;
+                }
+
+                return false;
+            })) {
+                if (regionsCount.get() > util.getLimitOfRegions()) {
+                    Print.toPlayer(creator, Message.inst.getMessage("Create.RegionCountLimit"));
                     return;
                 }
-            }
 
-            if (regionsCount > util.getLimitOfRegions()) {
-                Print.toPlayer(creator, Message.inst.getMessage("Create.RegionCountLimit"));
-                return;
+                this.name = name;
+                regions.add(this);
+                Print.toPlayer(creator, Message.inst.getMessage("Create.Successfully").replace("%region", name).replace("%size", String.valueOf(numOfBlocks)));
             }
-
-            this.name = name;
-            regions.add(this);
-            Print.toPlayer(creator, Message.inst.getMessage("Create.Successfully").replace("%region", name).replace("%size", String.valueOf(numOfBlocks)));
         });
     }
 
     public static Region getByName(String name) {
-        for (Region region : regions)
-            if (region.getName().equalsIgnoreCase(name))
-                return region;
-        return null;
+        return regions.parallelStream().filter(rg -> rg.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     public static Region getByLocation(Location location) {
-        for (Region region : regions)
-            if (region.isLocInRegion(location))
-                return region;
-        return null;
+        return regions.parallelStream().filter(rg -> rg.isLocInRegion(location)).findFirst().orElse(null);
     }
 
     public boolean isPlayerInRegion(Player player) {

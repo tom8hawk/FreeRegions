@@ -105,22 +105,20 @@ public class FlagListener implements Listener
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInvincible(EntityDamageEvent e) {
-        if (!(e.getEntity() instanceof Player))
+        if (!(e.getEntity() instanceof Player) || e.isCancelled())
             return;
 
         Player player = (Player)e.getEntity();
         Region region = Region.getByLocation(player.getLocation());
 
-        if (region != null) {
-            if (e.getCause() == EntityDamageEvent.DamageCause.FALL && !bypass(player) && !region.isPlayerInRegion(player) && !region.isInvincible())
-                e.setCancelled(true);
-        }
+        e.setCancelled(region != null && e.getCause() == EntityDamageEvent.DamageCause.FALL && !bypass(player) && !region.isPlayerInRegion(player) && !region.isInvincible());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockExplode(BlockExplodeEvent e) {
         List<Block> toRemove = new ArrayList<>();
-        e.blockList().forEach(block -> {
+
+        e.blockList().parallelStream().forEach(block -> {
             Region region = Region.getByLocation(block.getLocation());
 
             if (region != null && !region.isExplosion())
@@ -132,7 +130,8 @@ public class FlagListener implements Listener
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityExplode(EntityExplodeEvent e) {
         List<Block> toRemove = new ArrayList<>();
-        for (Block block : e.blockList()) {
+
+        e.blockList().parallelStream().forEach(block -> {
             Region region = Region.getByLocation(block.getLocation());
 
             if (region != null && !region.isExplosion()) {
@@ -144,14 +143,14 @@ public class FlagListener implements Listener
                     if (source != null && source.isValid() && source instanceof Player) {
                         Player player = (Player) source;
 
-                        if (region.isPlayerInRegion(player) || bypass(player)) continue;
+                        if (region.isPlayerInRegion(player) || bypass(player)) return;
 
                         player.sendMessage(Message.inst.getMessage("Flags.NotBuild"));
                     }
                 }
                 toRemove.add(block);
             }
-        }
+        });
         toRemove.forEach(e.blockList()::remove);
     }
 

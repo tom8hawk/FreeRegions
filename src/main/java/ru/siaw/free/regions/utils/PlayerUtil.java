@@ -4,7 +4,6 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 import ru.siaw.free.regions.Main;
 import ru.siaw.free.regions.Selection;
 
@@ -20,23 +19,17 @@ public class PlayerUtil
     }
 
     public int getLimitOfBlocks() {
-        for (PermissionAttachmentInfo permission : player.getEffectivePermissions()) {
-            if (permission.getPermission().startsWith("freerg.limit.blocks.")) {
-                String[] split = permission.getPermission().split("\\.");
-                return Integer.parseInt(split[3]);
-            }
-        }
-        return Integer.MAX_VALUE;
+        return player.getEffectivePermissions().parallelStream()
+                .filter(permission -> permission.getPermission().startsWith("freerg.limit.blocks."))
+                .mapToInt(permission -> Integer.parseInt(permission.getPermission().split("\\.")[3]))
+                .findFirst().orElse(Integer.MAX_VALUE);
     }
 
     public int getLimitOfRegions() {
-        for (PermissionAttachmentInfo permission : player.getEffectivePermissions()) {
-            if (permission.getPermission().startsWith("freerg.limit.region.")) {
-                String[] split = permission.getPermission().split("\\.");
-                return Integer.parseInt(split[3]);
-            }
-        }
-        return Integer.MAX_VALUE;
+        return player.getEffectivePermissions().parallelStream()
+                .filter(permission -> permission.getPermission().startsWith("freerg.limit.region."))
+                .mapToInt(permission -> Integer.parseInt(permission.getPermission().split("\\.")[3]))
+                .findFirst().orElse(Integer.MAX_VALUE);
     }
 
     public void showEffect(Location pos1, Location pos2) {
