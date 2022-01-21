@@ -1,4 +1,4 @@
-package ru.siaw.free.regions.Gui;
+package ru.siaw.free.regions.gui;
 
 import fr.minuskube.inv.SmartInventory;
 import org.bukkit.entity.Player;
@@ -10,9 +10,8 @@ public class Gui
 {
     public static void flags(Player p, Region rg) {
         Main.executor.execute(() -> {
-            Flags.getRegions().put(p, rg);
             SmartInventory inventory = SmartInventory.builder()
-                    .provider(new Flags())
+                    .provider(new Flags(rg))
                     .manager(Main.inventoryManager)
                     .size(4, 9)
                     .title(Message.inst.getMessage("Guis.ChangeFlag.Title").replace("%region", rg.getName()))
@@ -26,7 +25,7 @@ public class Gui
             SmartInventory inventory = SmartInventory.builder()
                     .provider(new AllRegions())
                     .manager(Main.inventoryManager)
-                    .title(Message.inst.getMessage("Guis.AllRegions.Title"))
+                    .title(Message.inst.getMessage("Guis.AllRegions.Title").replace("%sum", String.valueOf(Region.getRegions().size())))
                     .build();
             inventory.open(p);
         });

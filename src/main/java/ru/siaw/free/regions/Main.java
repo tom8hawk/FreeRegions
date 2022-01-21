@@ -57,7 +57,7 @@ public class Main extends JavaPlugin
 
     @Override
     public void onDisable() {
-        Region.getRegions().parallelStream().forEach(DataBase.inst::writeRegion);
+        Region.getRegions().forEach(DataBase.inst::writeRegion);
         Region.getRegions().clear();
 
         Print.toConsole("До новых встреч! :0");

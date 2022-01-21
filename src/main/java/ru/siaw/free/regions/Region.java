@@ -24,7 +24,7 @@ public class Region
     @Getter private List<OfflinePlayer> owners = new ArrayList<>(), members = new ArrayList<>();
     @Getter @Setter private boolean pvp, mobSpawning, mobDamage, use, piston, build, fire, invincible, leavesFalling, explosion, itemDrop, entry;
 
-    public Region(String name, Location location1, Location location2, OfflinePlayer creator, List<OfflinePlayer> owners, List<OfflinePlayer> members, boolean pvp, boolean mobSpawning, boolean mobDamage,
+    public Region(String name, Location location1, Location location2, OfflinePlayer creator, List<OfflinePlayer> owners, List<OfflinePlayer> members, int numOfBlocks, boolean pvp, boolean mobSpawning, boolean mobDamage,
                   boolean use, boolean piston, boolean build, boolean fire, boolean invincible, boolean leavesFalling, boolean explosion, boolean itemDrop, boolean entry) {
         this.name = name;
         this.location1 = location1;
@@ -32,6 +32,8 @@ public class Region
         this.creator = creator;
         this.owners = owners;
         this.members = members;
+
+        this.numOfBlocks = numOfBlocks;
 
         this.pvp = pvp;
         this.mobSpawning = mobSpawning;
@@ -46,7 +48,7 @@ public class Region
         this.itemDrop = itemDrop;
         this.entry = entry;
 
-        countBlocks(() -> regions.add(this));
+        regions.add(this);
     }
 
     public Region(String name, Location location1, Location location2, Player creator, boolean pvp, boolean mobSpawning, boolean mobDamage,
@@ -69,9 +71,25 @@ public class Region
         this.itemDrop = itemDrop;
         this.entry = entry;
 
-        countBlocks(() -> {
-            if (!location1.getWorld().equals(location2.getWorld()))
+        Main.executor.execute(() -> {
+            int minX = (Math.min(location1.getBlockX(), location2.getBlockX()));
+            int maxX = (Math.max(location1.getBlockX(), location2.getBlockX()));
+
+            int minY = (Math.min(location1.getBlockY(), location2.getBlockY()));
+            int maxY = (Math.max(location1.getBlockY(), location2.getBlockY()));
+
+            int minZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
+            int maxZ = (Math.max(location1.getBlockZ(), location2.getBlockZ()));
+
+            for (int x = minX; x <= maxX; x++)
+                for (int z = minZ; z <= maxZ; z++)
+                    for (int y = minY; y <= maxY; y++)
+                        numOfBlocks++;
+
+            if (!location1.getWorld().getName().equals(location2.getWorld().getName())) {
                 Print.toPlayer(creator, Message.inst.getMessage("Positions.DifferentWorlds"));
+                return;
+            }
 
             PlayerUtil util = new PlayerUtil(creator);
             int limitOfBlocks = util.getLimitOfBlocks();
@@ -98,6 +116,7 @@ public class Region
 
                 return false;
             })) {
+
                 if (regionsCount.get() > util.getLimitOfRegions()) {
                     Print.toPlayer(creator, Message.inst.getMessage("Create.RegionCountLimit"));
                     return;
@@ -105,6 +124,7 @@ public class Region
 
                 this.name = name;
                 regions.add(this);
+
                 Print.toPlayer(creator, Message.inst.getMessage("Create.Successfully").replace("%region", name).replace("%size", String.valueOf(numOfBlocks)));
             }
         });
@@ -133,26 +153,6 @@ public class Region
         int minZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
 
         return loc.getX() >= minX && loc.getX() <= maxX && loc.getY() >= minY && loc.getY() <= maxY && loc.getZ() >= minZ && loc.getZ() <= maxZ;
-    }
-
-    private void countBlocks(Runnable task) {
-        Main.executor.execute(() -> {
-            int minX = (Math.min(location1.getBlockX(), location2.getBlockX()));
-            int maxX = (Math.max(location1.getBlockX(), location2.getBlockX()));
-
-            int minY = (Math.min(location1.getBlockY(), location2.getBlockY()));
-            int maxY = (Math.max(location1.getBlockY(), location2.getBlockY()));
-
-            int minZ = (Math.min(location1.getBlockZ(), location2.getBlockZ()));
-            int maxZ = (Math.max(location1.getBlockZ(), location2.getBlockZ()));
-
-            for (int x = minX; x <= maxX; x++)
-                for (int z = minZ; z <= maxZ; z++)
-                    for (int y = minY; y <= maxY; y++)
-                        numOfBlocks++;
-
-            task.run();
-        });
     }
 
     public void remove() {

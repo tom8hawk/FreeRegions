@@ -7,11 +7,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import ru.siaw.free.regions.Gui.Gui;
 import ru.siaw.free.regions.Main;
 import ru.siaw.free.regions.Region;
 import ru.siaw.free.regions.Selection;
 import ru.siaw.free.regions.config.Message;
+import ru.siaw.free.regions.gui.Gui;
 import ru.siaw.free.regions.utils.Other;
 import ru.siaw.free.regions.utils.Print;
 

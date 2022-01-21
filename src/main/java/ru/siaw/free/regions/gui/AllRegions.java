@@ -1,4 +1,4 @@
-package ru.siaw.free.regions.Gui;
+package ru.siaw.free.regions.gui;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
@@ -23,15 +23,13 @@ public class AllRegions implements InventoryProvider
         Main.executor.execute(() -> {
             Pagination pagination = contents.pagination();
 
-            ClickableItem[] items = new ClickableItem[Region.getRegions().size()];
-            for(int i = 0; i < items.length; i++) {
-                Region region = Region.getRegions().get(i);
-
+            pagination.setItems(Region.getRegions().parallelStream().map(region -> {
                 ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
                 SkullMeta meta = (SkullMeta) skull.getItemMeta();
 
                 meta.setOwningPlayer(region.getCreator());
                 meta.setDisplayName(Message.inst.getMessage("Guis.AllRegions.DisplayName").replace("%region", region.getName()));
+
                 ArrayList<String> lore = new ArrayList<>();
                 lore.add(Message.inst.getMessage("Guis.AllRegions.Status." + (region.isPlayerInRegion(region.getCreator().getPlayer()) ? "One" : "Two")));
                 Message.inst.getList("Guis.AllRegions.Lores").forEach(line -> lore.add(Other.replaceRegionInfo(line, region)));
@@ -39,20 +37,18 @@ public class AllRegions implements InventoryProvider
                 meta.setLore(lore);
                 skull.setItemMeta(meta);
 
-                items[i] = ClickableItem.of(skull,
-                        e -> {
-                            contents.inventory().close(player);
-                            player.chat("/rg flag " + region.getName());
-                        });
-            }
-            pagination.setItems(items);
-            pagination.setItemsPerPage(45);
+                return ClickableItem.of(skull, e -> {
+                    contents.inventory().close(player);
+                    player.chat("/rg flag " + region.getName());
+                });
+            }).toArray(ClickableItem[]::new));
 
+            pagination.setItemsPerPage(45);
             pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 0, 0));
 
             contents.set(5, 3, ClickableItem.of(Other.createItemStack(Material.ARROW, String.format("На предыдущую страницу - %d", pagination.previous().getPage())),
                     e -> contents.inventory().open(player, pagination.previous().getPage())));
-            contents.set(5, 5, ClickableItem.of(Other.createItemStack(Material.ARROW, String.format("На следующую страницу - %d", pagination.previous().getPage())),
+            contents.set(5, 5, ClickableItem.of(Other.createItemStack(Material.ARROW, String.format("На следующую страницу - %d", pagination.next().getPage())),
                     e -> contents.inventory().open(player, pagination.next().getPage())));
         });
     }
@@ -61,13 +57,11 @@ public class AllRegions implements InventoryProvider
     private short ticks = 0;
     @Override
     public void update(Player player, InventoryContents inventoryContents) {
-        Main.executor.execute(() -> {
-            if (ticks == 1200 || first) {
-                init(player, inventoryContents);
-                first = false;
-                ticks = 0;
-            }
-            else ticks++;
-        });
+        if (ticks == 1200 || first) {
+            init(player, inventoryContents);
+            first = false;
+            ticks = 0;
+        }
+        else ticks++;
     }
 }

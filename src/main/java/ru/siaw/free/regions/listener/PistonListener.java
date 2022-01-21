@@ -73,13 +73,13 @@ public class PistonListener implements Listener
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPistonRetract(BlockPistonRetractEvent e) {
-        Optional<Region> result = e.getBlocks().parallelStream().map(block -> Region.getByLocation(block.getLocation())).findFirst();
+        Region region = e.getBlocks().parallelStream().map(block -> Region.getByLocation(block.getLocation())).findFirst().orElse(null);
 
-        if (result.isPresent() && !result.get().isPiston()) {
+        if (region != null && !region.isPiston()) {
             if (placedPistons.containsKey(e.getBlock())) {
                 Player player = placedPistons.get(e.getBlock());
 
-                if (result.get().isPlayerInRegion(player))
+                if (region.isPlayerInRegion(player))
                     return;
 
                 Print.toPlayer(player, Message.inst.getMessage("Flags.NotUse"));
